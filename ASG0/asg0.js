@@ -1,9 +1,4 @@
-// Tiffany Guan
-// CruzID: tijguan
-// ID: #1882244
-// CSE 160 Asg0
-// Spring 2024
-
+// CSE 160 Spring 2024
 
 // drawVector()
 // Function that draws the line of a vector with the provided color
