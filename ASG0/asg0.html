@@ -16,16 +16,46 @@
         <script src="asg0.js"></script>
         <script src='/Users/mintaffy/Desktop/cse160/ASG0/lib/cuon-matrix-cse160.js'></script>
 
+        <!-- Part 3's -->
         <div class="v1-interface">
-            <label for="xcoord">v1 x:</label>
-            <input type="number" id="xcoord">
-            <label for="ycoord">y:</label>
-            <input type="number" id="ycoord">
+            <label for="xcoord1">v1 x:</label>
+            <input type="number" id="xcoord1">
+            <label for="ycoord1">y:</label>
+            <input type="number" id="ycoord1">
+        </div>
+        
+        <!-- Part 4's -->
+        <div class="v2-interface" style="margin-bottom: 5px;"> 
+            <label for="xcoord2">v2 x:</label>
+            <input type="number" id="xcoord2">
+            <label for="ycoord2">y:</label>
+            <input type="number" id="ycoord2">
+        </div>
 
+        <div class="Draw" style="margin-bottom: 10px;">
             <!--source: https://stackoverflow.com/questions/2788191/how-to-check-whether-a-button-is-clicked-by-using-javascript -->
             <input id="button" type="submit" value="Draw" onclick="handleDrawEvent();">
         </div>
+
+        <!-- Part 5's -->
+        <div class="operation-scalar">
+            <label for="operation">Operation:</label>
         
+            <select name="options" id="option-select"> <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select -->
+                <option value="add">Add</option>
+                <option value="sub">Subtract</option>
+                <option value="mul">Multiply</option>
+                <option value="div">Divide</option>
+            </select>
+
+            <label for="scalar">Scalar:</label>
+            <input type="number" id="scalar-val">
+        </div>
+
+        <div class="Draw">
+            <!--source: https://stackoverflow.com/questions/2788191/how-to-check-whether-a-button-is-clicked-by-using-javascript -->
+            <input id="button" type="submit" value="Draw" onclick="handleDrawOperationEvent();">
+        </div>
     </body>
     
 
