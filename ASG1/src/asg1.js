@@ -73,12 +73,6 @@ function connectVariablesToGLSL() {
 
 }
 
-// Coordinates list for a FISH:
-//let vFish = [0,0,0,
-             //1,1,0];
-
-
-
 // Constants
 const POINT = 0;
 const TRIANGLE = 1;
