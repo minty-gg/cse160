@@ -77,31 +77,34 @@ function connectVariablesToGLSL() {
 const POINT = 0;
 const TRIANGLE = 1;
 const CIRCLE = 2;
-const FISH = 3;
-const INVERT = 4;
+// const FISH = 3;
+
 
 // Globals related to UI elements
 let g_selectedColor=[1.0,1.0,1.0,1.0];
 let g_selectedSize=5;
 let g_selectedType=POINT;
 let g_selectedSegment=5;
+let g_fish = false;
 
 // Set up actions for the HTML UI elements
 function addActionsForHtmlUI() {
   // Button Events (Shape Type)
   document.getElementById('red').onclick = function () { g_selectedColor = [1.0,0.0,0.0,1.0]};
-  document.getElementById('orange').onclick = function () { g_selectedColor = [1.0,0.5,0.0,1.0]};
+  document.getElementById('orange').onclick = function () { g_selectedColor = [1.0, 127/255,0.0,1.0]};
   document.getElementById('yellow').onclick = function () { g_selectedColor = [1.0,1.0,0.0,1.0]};
   document.getElementById('green').onclick = function () { g_selectedColor = [0.0,1.0,0.0,1.0]}
   document.getElementById('blue').onclick = function () { g_selectedColor = [0.0,0.0,1.0,1.0]};
-  document.getElementById('purple').onclick = function () { g_selectedColor = [0.6,0.1,0.8,1.0]};
-  document.getElementById('clearButton').onclick = function () {g_shapesList=[]; renderAllShapes();};
+  document.getElementById('indigo').onclick = function () { g_selectedColor = [75/255,0.0,130/255,1.0]};
+  document.getElementById('purple').onclick = function () { g_selectedColor = [148/255,0.0,211/255,1.0]};
+  document.getElementById('clearButton').onclick = function () {g_shapesList=[]; gl.clearColor(0.0, 0.0, 0.0, 1.0); renderAllShapes(); g_fish = false;};
   
   document.getElementById('pointButton').onclick = function() {g_selectedType=POINT};
   document.getElementById('triButton').onclick = function() {g_selectedType=TRIANGLE};
   document.getElementById('circleButton').onclick = function() {g_selectedType=CIRCLE};
   
-  document.getElementById('fishButton').onclick = function() { drawFish(); };
+  document.getElementById('fishButton').onclick = function() {g_fish = true; drawFish(); };
+  // document.getElementById('hamster').onclick = function() {};
 
   // calling renderAllShapes() will clear canvas after u click clear button
   // if only call g_shapesList(), it only resets list but doesn't clear canvas until your next click to add a point to canvas
@@ -145,17 +148,11 @@ function main() {
 // a list of shapes that stores a list of points 
 var g_shapesList = [];
 
-// var g_points = [];  // The array for the position of a mouse press
-// var g_colors = [];  // The array to store the color of a point
-// var g_sizes = [];   // The array to store the size of a point
-
 function click(ev) {
 
   // Extract the event click and return it in WebGL coordinates
-
   let [x,y] = convertCoordinatesEventToGL(ev);
-  //let a = x;
-  //let b = y;
+  
 
   // Create and store the new point into shapes list
   let point;
@@ -174,30 +171,6 @@ function click(ev) {
   point.size = g_selectedSize;
   point.segment = g_selectedSegment;
   g_shapesList.push(point);
-
-  // ---REPLACED WITH Point class^ -----
-  // // Store the coordinates to g_points array
-  // g_points.push([x, y]);
-
-  // // Instead: Store the color to g_colors array
-  // // .slice() extracts text from one string and returns a new string
-  // g_colors.push(g_selectedColor.slice()); // alternative: g_colors.push([g_selectedColor[0], g_selectedColor[1], g_selectedColor[2], g_selectedColor[3]]);
-  
-  // // Store the size to the g_izes array
-  // g_sizes.push(g_selectedSize);
-
-  // ---REPLACE WITH g_sizes.push^ -------
-  // // Store the coordinates to g_points array
-  // g_points.push([x, y]);
-  // // Store the coordinates to g_points array
-  // if (x >= 0.0 && y >= 0.0) {      // First quadrant
-  //   g_colors.push([1.0, 0.0, 0.0, 1.0]);  // Red
-  // } else if (x < 0.0 && y < 0.0) { // Third quadrant
-  //   g_colors.push([0.0, 1.0, 0.0, 1.0]);  // Green
-  // } else {                         // Others
-  //   g_colors.push([1.0, 1.0, 1.0, 1.0]);  // White
-  // }
-
 
   // Draw every shape that is supposed to be in the canvas
   renderAllShapes();
@@ -224,8 +197,13 @@ function renderAllShapes() {
 
   // Clear <canvas>
   // Rendering the points
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  // if (g_fish == true) {
+  //   gl.clearColor(0.0, 0.0, 0.0, 1.0);  // change canvas background back to black if fish drawing needs to be cleared
+  //   g_fish = false;
+  // }
 
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  
   //var len = g_points.length;
   var len = g_shapesList.length;
   for(var i = 0; i < len; i++) {
@@ -247,10 +225,11 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
   htmlElm.innerHTML = text; // send inner html to whatver the text was
 }
 
-// failed to draw a fish
+// drawing a fish
 function drawFish() {
+  
+  gl.clearColor(0.43, 0.79, 0.97, 1.0); // light blue background
   gl.clear(gl.COLOR_BUFFER_BIT);
-
    
   let v2 = new Triangle();
   v2.position[0.0, 0.0];
@@ -258,7 +237,7 @@ function drawFish() {
   v2.size = 0.0;
   v2.render();
 
-  //yellow
+  //yellow (fish body)
   var vertices = new Float32Array([0.0, 0.0,   0.5, 0.0,   0.5, -0.2]);
   drawTriangle(vertices);
 
@@ -298,7 +277,7 @@ function drawFish() {
   v1.size = 0.0;
   v1.render();
 
-  // orange
+  // orange (fish head)
   vertices = new Float32Array([0.0, 0.0,   -0.2, -0.2,   0.0, -0.2]);
   drawTriangle(vertices);
 
@@ -311,22 +290,21 @@ function drawFish() {
   vertices = new Float32Array([0.05, -0.2,   0.0, -0.4,   0.0, -0.2]);
   drawTriangle(vertices);
 
-
-  vertices = new Float32Array([0.9, 0.0,   0.9, -0.1,   0.7, -0.1]);
+  // tail
+  vertices = new Float32Array([0.85, 0.0,   0.85, -0.1,   0.65, -0.1]);
   drawTriangle(vertices);
 
-  vertices = new Float32Array([0.9, 0.-0.3,   0.9, -0.4,   0.7, -0.3]);
+  vertices = new Float32Array([0.85, 0.-0.3,   0.85, -0.4,   0.65, -0.3]);
   drawTriangle(vertices);
 
-  vertices = new Float32Array([0.7, -0.1,   0.9, -0.1,   0.9, -0.3]);
+  vertices = new Float32Array([0.65, -0.1,   0.85, -0.1,   0.85, -0.3]);
   drawTriangle(vertices);
 
-  vertices = new Float32Array([0.9, 0.-0.3,   0.7, -0.1,   0.7, -0.3]);
+  vertices = new Float32Array([0.85, 0.-0.3,   0.65, -0.1,   0.65, -0.3]);
   drawTriangle(vertices);
-
 
   // top fin
-  vertices = new Float32Array([0.05, -0.005,   0.63, -0.005,   0.5, 0.2]);
+  vertices = new Float32Array([0.05, -0.005,   0.6, -0.045,   0.5, 0.2]);
   drawTriangle(vertices);
 
   // bottom fin
@@ -336,35 +314,11 @@ function drawFish() {
 
   let v3 = new Triangle();
   v3.position[0.0, 0.0];
-  v3.color = [0.0, 0.0, 0.0, 1.0]; // yellow
+  v3.color = [0.0, 0.0, 0.0, 1.0]; // black
   v3.size = 0.0;
   v3.render();
-  // eye
-  vertices = new Float32Array([0, -0.16,   -0.1, -0.16,   -0.5, -0.175]);
+
+  // fish eye
+  vertices = new Float32Array([-0.01, -0.15,   -0.09, -0.15,   -0.05, -0.2]);
   drawTriangle(vertices);
-
 }
-
-  //g_shapesList = [];
-
-  // let v1 = new Point();
-  // v1.type = 'point';
-  // v1.positon = [0, 0];
-  // v1.color = [1.0, 0.6, 0.02, 1.0];
-  // v1.size = 1.0;
-  // g_shapesList[0] = v1;
-  // // v1.render();
-
-  // let v2 = new Point();
-  // v2.type = 'point';
-  // v2.positon = [-120, -120];
-  // v2.color = [1.0, 0.6, 0.02, 1.0];
-  // v2.size = 1.0;
-  // g_shapesList[1] = v2;
-
-  // let v3 = new Point();
-  // v3.type = 'point';
-  // v3.positon = [0, -120];
-  // v3.color = [1.0, 0.6, 0.02, 1.0];
-  // v3.size = 1.0;
-  // g_shapesList[2] = v3;

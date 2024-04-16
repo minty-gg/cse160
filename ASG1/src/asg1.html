@@ -3,19 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <title>Change a point color</title>
+
+    <style>
+      #image{
+        display: none;
+        float: right;
+        padding-right: 300px;
+      }
+    </style>
+    
   </head>
 
   <body onload="main()">
 
-    <div id="student-info" style="float: right; padding-right: 100px;">
+    <div id="student-info" style="float: right; padding-right: 90px;">
       
       <p>Name: Tiffany Guan</p>
       <p>Email: tijguan@ucsc.edu</p>
       <br>
       <p><u>Notes to Grader:</u></p>
-      <p >Awesomeness: 1. added more color options,</p>
-      <p>2. organized sliders and buttons into their respective categories, and </p> 
-      <p>3. added numbers to appear based on slider input so you can adjust the values better</p>
+      <p >Awesomeness:</p>
+      <p>1. added more color options</p>
+      <p>2. organized sliders and buttons into their respective categories </p> 
+      <p>3. added slider values to appear based on slider input so you can adjust the values better</p>
+      <p>4. added an extra button that makes an image pop up</p>
     </div>
 
     <div class="container" style="height: 425px; width: 1000px;">
@@ -23,39 +34,55 @@
       Please use a browser that supports "canvas"
       </canvas>
       
-      
       <img src="fish.JPG" width="400" height="400" >
-      <figcaption style="padding-left: 500px;">I tried to draw this (and failed miserably)</figcaption>
-      
+      <figcaption style="padding-left: 500px;">Fishy in the sea</figcaption>
       
     </div>
+
+    <div class="pic-appear">
+      <figure>
+        <img src="coquette-hampter.png" id="image" width="330" height="300">
+      </figure>
+    </div>
+
     <p id="numdot"></p>
     <p>
 
     <button type="button" id="clearButton">Clear Canvas</button>
 
     <div class="rainbow">
-      <p>ROYGBIV Colors:</p>
+      <p style="display: inline-block;">ROYGBIV Colors:</p>
       <button type="button" id="red">Red</button>
       <button type="button" id="orange">Orange</button>
       <button type="button" id="yellow">Yellow</button>
       <button type="button" id="green">Green</button>
       <button type="button" id="blue">Blue</button>
+      <button type="button" id="indigo">Indigo</button>
       <button type="button" id="purple">Purple</button>
     </div>
     
     <div>
-      <p>Shape Adjustments:</p>
-      <button type="button" id="pointButton">Point</button>
+      <p style="display: inline-block;">Drawing Mode:</p>
+      <button type="button" id="pointButton">Squares</button>
       <button type="button" id="triButton">Triangle</button>
       <button type="button" id="circleButton">Circle</button>
     </div>
     <p>
-    <button type="button" id="fishButton">Fishy</button>
     
-     
+      <!-- source: https://www.geeksforgeeks.org/how-to-show-images-on-click-using-html/ -->
+    <div class="myButtons">
+      <p style="display: inline-block;">Wow I wonder what happens when I click these... </p>
+      <button type="button" id="fishButton">Fishy</button>
+      <button type="button" id="hamster" onclick="show()">me doing this asgn</button>
+          <script>
+            function show() {
+              document.getElementById('image').style.display = "block";
+            } 
+          </script>
+    </div>
+    
     <div class="adj-colors" style="padding-right:15px;">
-    <p>Shape Color Adjustments:</p>
+    <p >Shape Color Adjustments:</p>
     Red <input type="range" min="0" max="255" value="100" class="slider" id="redSlide" oninput="this.nextElementSibling.value = this.value"><output>100</output>
     Green <input type="range" min="0" max="255" value="0" class="slider" id="greenSlide" oninput="this.nextElementSibling.value = this.value"><output>0</output>
     Blue <input type="range" min="0" max="255" value="0" class="slider" id="blueSlide" oninput="this.nextElementSibling.value = this.value"><output>0</output>
@@ -68,7 +95,6 @@
     <p>
     </div>
     
-
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>
     <script src="../lib/cuon-utils.js"></script>

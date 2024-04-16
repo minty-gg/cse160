@@ -28,10 +28,6 @@ class Triangle{
 // changed this function so that we can just draw the triangle with given vertices straight from cpu to gpu
 function drawTriangle(vertices) {//initVertexBuffers(gl) {
 
-    // this sits in the js on the CPU
-    // var vertices = new Float32Array([
-    //   0, 0.5,   -0.5, -0.5,   0.5, -0.5
-    // ]);
     var n = 3; // The number of vertices
   
     // Create a buffer object
@@ -46,13 +42,6 @@ function drawTriangle(vertices) {//initVertexBuffers(gl) {
     // Write date into the buffer object
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
     // gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW); // this is on the GPU taken from the CPU (vertices)
-  
-    // --to get pointer location to a_Position --> don't need this bc already in ColoredPoints.js connectVariablesToGLSL() function--
-    // var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    // if (a_Position < 0) {
-    //   console.log('Failed to get the storage location of a_Position');
-    //   return -1;
-    // }
   
     // Assign the buffer object to a_Position variable
     gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0); // last two 0's = offset and stride (only if you use interleaved? but prof does not recc so set to 0)
