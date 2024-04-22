@@ -65,6 +65,8 @@ function main() {
 	const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 	const mesh = new THREE.Mesh(heart, material ) ;
 	scene.add( mesh );
+	// cubes.push(mesh);
+
 
     // TO LOAD FISHY OBJ FILE? errr it's not working..
 	// const mtlLoader = new MTLLoader();
