@@ -98,9 +98,19 @@ const CIRCLE = 2;
 let g_selectedColor=[1.0,1.0,1.0,1.0];
 let g_selectedSize=5;
 let g_selectedType=POINT;
+
+// slider angles
 let g_horAngle=0;
 let g_verAngle=0;
+let g_zAngle=0;
 
+// global mouse rotation
+let g_globalX = 0;
+let g_globalY=0;
+let g_globalZ=0;
+let g_origin = [0, 0];
+
+// arm/hand wave vars
 let g_waveLAngle=0;
 let g_waveRAngle=0;
 let g_waveLAnimation = false;
@@ -109,20 +119,39 @@ let g_waveRAnimation = false;
 let vertical = false;
 let horizontal = false;
 
+let g_leftHand = 0;
+let g_rightHand = 0;
+let g_leftArm = 0;
+let g_rightArm = 0;
+let g_tail = false;
+let g_tailAngle = 0;
 
 
+// function to reset all variables back to their default values
 function resetAll() {
 
   g_horAngle=0;
   g_verAngle=0;
+  g_zAngle=0;
+  vertical = false;
+  horizontal = false;
+
+  g_globalX=0;
+  g_globalY=0;
+  g_globalZ=0;
+  g_origin;
 
   g_waveLAngle=0;
   g_waveRAngle=0;
   g_waveLAnimation = false;
   g_waveRAnimation = false;
 
-  vertical = false;
-  horizontal = false;
+  g_leftHand = 0;
+  g_rightHand = 0;
+  g_leftArm = 0;
+  g_rightArm = 0;
+  g_tail = false;
+  g_tailAngle = 0;
 
   renderAllShapes();
 }
@@ -140,13 +169,19 @@ function addActionsForHtmlUI() {
 	document.getElementById('animationWaveLOffButton').onclick = function() {g_waveLAnimation = false;};
 	document.getElementById('animationWaveROnButton').onclick = function() {g_waveRAnimation = true;};
 	document.getElementById('animationWaveROffButton').onclick = function() {g_waveRAnimation = false;};
-
+  document.getElementById('animationTailOnButton').onclick = function() {g_tail = true;};
+	document.getElementById('animationTailOffButton').onclick = function() {g_tail = false;};
   // Color Slider Events
-  //document.getElementById('yellowSlide').addEventListener('mousemove', function() { g_yellowAngle = this.value; renderAllShapes(); });
-	//document.getElementById('magentaSlide').addEventListener('mousemove', function() { g_magentaAngle = this.value; renderAllShapes(); });
+  
+  
   // Size Slider Events
   document.getElementById('angleSlide').addEventListener('mousemove', function() { g_horAngle = this.value; horizontal = true; renderAllShapes(); });
   document.getElementById('verSlide').addEventListener('mousemove', function() { g_verAngle = this.value; vertical = true; renderAllShapes(); });
+
+  document.getElementById('leftArmSlide').addEventListener('mousemove', function() { g_leftArm = this.value; renderAllShapes(); });
+	document.getElementById('rightArmSlide').addEventListener('mousemove', function() { g_rightArm = this.value; renderAllShapes(); });
+  document.getElementById('leftHSlide').addEventListener('mousemove', function() { g_leftHand = this.value; renderAllShapes(); });
+	document.getElementById('rightHSlide').addEventListener('mousemove', function() { g_rightHand = this.value; renderAllShapes(); });
 }
 
 // MAIN FUNCTION
@@ -163,7 +198,7 @@ function main() {
 
   // Register function (event handler) to be called on a mouse press
   // assign an Event function to this variable and define it
-  canvas.onmousedown = click;  // function(ev){ click(ev) };
+  canvas.onmousedown = origin;  // function(ev) {origin(ev)} // function(ev){ click(ev) };
   // canvas.onmousemove = click; // doesn't work properly
   canvas.onmousemove  = function(ev) { if(ev.buttons == 1) { click(ev) } }; // ev.button is set to 1 if button is held down
 
@@ -200,54 +235,90 @@ function tick() {
 
 // Update the angle of everything if currently animated:
 function updateAnimationAngles() {
+
+  // left arm move
 	if (g_waveLAnimation) {
 		// g_waveLAngle = 10*Math.tan(g_seconds); // this could be an arm slash animation LOL
-    g_waveLAngle = 10*Math.sin(g_seconds);
+    g_waveLAngle = 90*Math.cos(g_seconds);
 	}
+
+  // right arm move
 	if (g_waveRAnimation) {
 		g_waveRAngle = 10*Math.cos(g_seconds);
 	}
+
+  // tail move
+  if (g_tail) {
+    g_tailAngle = 10*Math.cos(g_seconds);
+
+  }
+
+
 }
+
 
 // a list of shapes that stores a list of points 
 var g_shapesList = [];
+
+// SOURCE: I referenced code from "The Prince -Jeffrey Gu" to get the mouse click to rotate my drawing
+// https://people.ucsc.edu/~jrgu/asg2/blockyAnimal/BlockyAnimal.html
+// lines 287 - 312 to understand how to implement the click and rotation
+// Global angles
+
 function click(ev) {
 
   // Extract the event click and return it in WebGL coordinates
-  let [x,y] = convertCoordinatesEventToGL(ev);
+
+  let coordinates = convertCoordinatesEventToGL(ev);
   
 
   // Create and store the new point into shapes list
-  let point;
-  if (g_selectedType==POINT) {
-    point = new Point();
-  }
-  else if (g_selectedType==CIRCLE) {
-    point = new Circle();
-  }
-  else if (g_selectedType == TRIANGLE) {
-    point = new Triangle();
-  }
+  // let point;
+  // if (g_selectedType==POINT) {
+  //   point = new Point();
+  // }
+  // else if (g_selectedType==CIRCLE) {
+  //   point = new Circle();
+  // }
+  // else if (g_selectedType == TRIANGLE) {
+  //   point = new Triangle();
+  // }
 
-  point.position = [x,y];
-  point.color = g_selectedColor.slice();
-  point.size = g_selectedSize;
-  point.segment = g_selectedSegment;
-  g_shapesList.push(point);
+  // point.position = [x,y];
+  // point.color = g_selectedColor.slice();
+  // point.size = g_selectedSize;
+  // point.segment = g_selectedSegment;
+  // g_shapesList.push(point);
 
   // Draw every shape that is supposed to be in the canvas
   renderAllShapes();
 }
 
+//SOURCE: I referenced code from "The Prince -Jeffrey Gu" to get the mouse click to rotate my drawing
+// https://people.ucsc.edu/~jrgu/asg2/blockyAnimal/BlockyAnimal.html
+
+// function to keep track of the origin of where the user clicked on the canvas
+function originCoords(ev) {
+    var x = ev.clientX;
+    var y = ev.clientY;
+    g_origin = [x, y];
+}
 // Extract the event click and return it in WebGL coordinates
 function convertCoordinatesEventToGL(ev) {
-
+  
   var x = ev.clientX; // x coordinate of a mouse pointer
   var y = ev.clientY; // y coordinate of a mouse pointer
-  var rect = ev.target.getBoundingClientRect();
+  // var rect = ev.target.getBoundingClientRect();
 
-  x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
-  y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
+  // x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
+  // y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
+
+  // return([x,y]);
+  
+  let temp = [x,y];
+  x = (x - g_origin[0])/400;
+  y = (y - g_origin[1])/400;
+  g_origin = temp;
 
   return([x,y]);
 }
@@ -290,7 +361,7 @@ function renderAllShapes() {
 
   var nose = new Cube();
   nose.color = [130/255, 75/255, 0, 1];
-  nose.matrix.setTranslate(-0.073, 0.1, -0.05);
+  nose.matrix.setTranslate(-0.073, 0.1, -0.06);
   nose.matrix.scale(0.12, 0.08, 0.1);
   nose.render();
 
@@ -347,21 +418,21 @@ function renderAllShapes() {
   // left upper parts of his body (the little bumps)
   var bodyL = new Cube();
   bodyL.color = [135/255, 201/255, 197/255, 1];
-  bodyL.matrix.translate(-0.25, 0.03, -0.02);
+  bodyL.matrix.translate(-0.25, 0.03, -0.04);
   bodyL.matrix.rotate(-70, 0, 0, 1);
   bodyL.matrix.scale(0.1, 0.1, 0.16);
   bodyL.render();
 
   var bodyL2 = new Cube();
   bodyL2.color = [135/255, 201/255, 197/255, 1];
-  bodyL2.matrix.translate(-0.27, 0.03, -0.02);
+  bodyL2.matrix.translate(-0.27, 0.03, -0.04);
   bodyL2.matrix.rotate(-90, 0, 0, 1);
   bodyL2.matrix.scale(0.1, 0.1, 0.16);
   bodyL2.render();
 
   var bodyL3 = new Cube();
   bodyL3.color = [135/255, 201/255, 197/255, 1];
-  bodyL3.matrix.translate(-0.139, 0.039, -0.02);
+  bodyL3.matrix.translate(-0.139, 0.039, -0.04);
   bodyL3.matrix.rotate(-105, 0, 0, 1);
   bodyL3.matrix.scale(0.1, 0.1, 0.16);
   bodyL3.render();
@@ -369,47 +440,53 @@ function renderAllShapes() {
   // right upper parts of his body
   var bodyR = new Cube();
   bodyR.color = [135/255, 201/255, 197/255, 1];
-  bodyR.matrix.translate(0.21, -0.07, -0.02);
+  bodyR.matrix.translate(0.21, -0.07, -0.04);
   bodyR.matrix.rotate(70, 0, 0, 1);
   bodyR.matrix.scale(0.1, 0.1, 0.16);
   bodyR.render();
 
   var bodyR2 = new Cube();
   bodyR2.color = [135/255, 201/255, 197/255, 1];
-  bodyR2.matrix.translate(0.27, -0.075, -0.02);
+  bodyR2.matrix.translate(0.27, -0.075, -0.04);
   bodyR2.matrix.rotate(90, 0, 0, 1);
   bodyR2.matrix.scale(0.1, 0.1, 0.16);
   bodyR2.render();
 
   var bodyR3 = new Cube();
   bodyR3.color = [135/255, 201/255, 197/255, 1];
-  bodyR3.matrix.translate(0.05, -0.087, -0.02);
+  bodyR3.matrix.translate(0.05, -0.087, -0.04);
   bodyR3.matrix.rotate(10, 0, 0, 1);
   bodyR3.matrix.scale(0.1, 0.1, 0.16);
   bodyR3.render();
 
   // left arm and finger (connected)
   var armL = new Cylinder();
+  armL.matrix.setTranslate(-0.2, -0.05, 0.05)
   
-  armL.matrix.rotate(-g_waveLAngle, 0, 0, 1); // animation
-  var armLcoords = new Matrix4(armL.matrix);  // intermediate matrix
+  armL.matrix.rotate(90, 100, -30, 1);
+  armL.matrix.rotate(g_waveLAngle, 0, -g_waveLAngle, 1); // animation left arm on off
+  armL.matrix.rotate(-g_leftArm, g_leftArm, g_leftArm, 1);
 
-  armL.matrix.translate(-0.2, -0.02, 0.06)
-  armL.matrix.rotate(-100, -190, 140, 1);
+  var armLcoords = new Matrix4(armL.matrix);  // intermediate matrix
   armL.matrix.scale(0.1, 0.1, 0.07);
   armL.render();
+
   // left finger
   var fingerL = new Cone();
   fingerL.color = [1, 1, 1, 1];
   fingerL.matrix = armLcoords;
-  fingerL.matrix.translate(-0.285, -0.13, 0.04);
-  fingerL.matrix.rotate(-90, -190, 140, 1);
+  fingerL.matrix.translate(0.0, 0.0, 0.135); // left right, back front, up down
+  
+  fingerL.matrix.rotate(g_leftHand, g_leftHand, -g_leftHand, 1);  // slider move
+  fingerL.matrix.rotate(0, 0, 0, 1);
   fingerL.matrix.scale(0.1, 0.1, 0.1);
+  //fingerL.matrix.rotate(-g_leftArm, g_leftArm, g_leftArm, 1);
   fingerL.render();
 
 
   // right arm and finger (coonected)
   var armR = new Cylinder();
+
   armR.matrix.rotate(-g_waveRAngle, 0, 0, 1);
   var armRcoords = new Matrix4(armR.matrix);
 
@@ -435,18 +512,36 @@ function renderAllShapes() {
   footL.matrix.scale(0.2, 0.08, 0.15);
   footL.render();
 
+  // uhh smth is wrong with the right foot i wanna push it back ;-;
   var footR = new Cube();
   footR.color = [57/255, 88/255, 132/255, 1];
-  footR.matrix.translate(0.1, -0.45, -0.1);
-  footR.matrix.rotate(-20, 0, 20, 1);
+  footR.matrix.translate(0.07, -0.45, -0.05);
+  footR.matrix.rotate(-30, 0, -20, 1);
   footR.matrix.scale(0.2, 0.08, 0.15);
   footR.render();
 
   var tail = new Cube();
   tail.color = [57/255, 88/255, 132/255, 1];
-  tail.matrix.translate(-0.1, -0.38, 0.1);
-  tail.matrix.scale(0.2, 0.1, 0.4);
+  tail.matrix.translate(-0.1, -0.38, 0.35);
+  tail.matrix.scale(0.2, 0.1, 0.3);
+  tail.matrix.rotate(-10, 45, 0, 1);
+  tail.matrix.rotate(-2.5*g_tailAngle, 5*g_tailAngle, 0, 1);  // animate tail to move
   tail.render();
+
+  var butt = new Cube();
+  butt.color = [57/255, 88/255, 132/255, 1];
+  butt.matrix.translate(-0.105, -0.38, 0.255);
+  butt.matrix.scale(0.21, 0.1, 0.1);
+  butt.render();
+
+  // eyebrows and mouth? for angry poke animation?
+  // var mouthL = new Cube();
+  // var mouthR = new Cube();
+
+  // var browL = new Cube();
+  // var browR = new Cube();
+
+
 
 
 // ------------------

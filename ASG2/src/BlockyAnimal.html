@@ -22,10 +22,10 @@
 
     <div id="student-info" style="float: right; padding-right: 20px;">
       
-      <p>Name: Tiffany Guan</p>
+      <!-- <p>Name: Tiffany Guan</p>
       <p>Email: tijguan@ucsc.edu</p>
       <br>
-      <p><u>Notes to Grader:</u></p>
+      <p><u>Notes to Grader:</u></p> -->
       
     </div>
 
@@ -34,40 +34,52 @@
       Please use a browser that supports "canvas"
       </canvas>
       <p>(my poor attempt at) Oshawott!</p>
+      Shift + Click to see what happens! (nothing happens..yet... ;-;)</p>
     </div>
 
     <br>
+    <br>
+    <br>
     <p id="numdot"></p>
-    <p>
-    <button id="reset">Reset Animation</button>
+   
     
-    <p>
-    <button id="idle">Idle (nothing yet)</button>
-    </p>
 
 
-    <div class="3d-sliders">
+    <!-- For shitf click animation, it could be the math.tan thing; click on oshawott make him mad and lash out at u with his arm-->
+
+    <div class="3d-sliders-buttons">
+      <button id="reset">Reset Animation</button>
+      <button id="idle">Idle Animation (nothing yet)</button>
         <p>
-        <!-- blank <input type="range" min="-45" max="45" value="0" class="slider" id="magentaSlide">
-        blank <input type="range" min="-45" max="45" value="0" class="slider" id="waveLSlide"> -->
-
-
-        Right Arm:
+          
+        Left Arm   <input type="range" min="0" max="90" value="0" class="slider" id="leftArmSlide">
+        Right Arm  <input type="range" min="0" max="45" value="0" class="slider" id="rightArmSlide">
+        Left Hand <input type="range" min="0" max="45" value="0" class="slider" id="leftHSlide">
+        Right Hand <input type="range" min="0" max="45" value="0" class="slider" id="rightHSlide">
+         
+        </p>
+        
+        Right Wave:
         <button type="button" id="animationWaveROnButton">ON</button>
         <button type="button" id="animationWaveROffButton">OFF</button>
         </p>
         <p>
-        
-        
-        Left Arm:
+        Left Wave:
         <button type="button" id="animationWaveLOnButton">ON</button>
         <button type="button" id="animationWaveLOffButton">OFF</button>
         </p>
+
+        <p>
+        Tail:
+        <button type="button" id="animationTailOnButton">ON</button>
+        <button type="button" id="animationTailOffButton">OFF</button>
+        (Turn to the side to see this)
+        </p>
+
         <p>
         Horizontal Angle <input type="range" min="0" max="360" value="10" class="slider" id="angleSlide">
-        </p>
-        
         Vertical Angle <input type="range" min="0" max="360" value="10" class="slider" id="verSlide">
+        Z-axis Angle <input type="range" min="0" max="360" value="10" class="slider" id="Z-axisSlide">
         
     </div>
     
