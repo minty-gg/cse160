@@ -16,6 +16,8 @@
     <script src="Triangle.js"></script>
     <script src="Point.js"></script>
     <script src="Cube.js"></script>
+    <script src="Cone.js"></script>
+    <script src="Cylinder.js"></script>
     <script src="BlockyAnimal.js"></script>
 
     <div id="student-info" style="float: right; padding-right: 20px;">
@@ -31,31 +33,42 @@
       <canvas id="webgl" width="400" height="400">
       Please use a browser that supports "canvas"
       </canvas>
-      <p>Oshawott!</p>
+      <p>(my poor attempt at) Oshawott!</p>
     </div>
-    
+
     <br>
     <p id="numdot"></p>
     <p>
+    <button id="reset">Reset Animation</button>
+    
+    <p>
+    <button id="idle">Idle (nothing yet)</button>
+    </p>
 
 
     <div class="3d-sliders">
         <p>
-        Magenta <input type="range" min="-45" max="45" value="0" class="slider" id="magentaSlide">
-        Animation:
-        <button type="button" id="animationMagentaOnButton">ON</button>
-        <button type="button" id="animationMagentaOffButton">OFF</button>
+        <!-- blank <input type="range" min="-45" max="45" value="0" class="slider" id="magentaSlide">
+        blank <input type="range" min="-45" max="45" value="0" class="slider" id="waveLSlide"> -->
+
+
+        Right Arm:
+        <button type="button" id="animationWaveROnButton">ON</button>
+        <button type="button" id="animationWaveROffButton">OFF</button>
         </p>
         <p>
-        Yellow <input type="range" min="-45" max="45" value="0" class="slider" id="yellowSlide">
         
-        Animation:
-        <button type="button" id="animationYellowOnButton">ON</button>
-        <button type="button" id="animationYellowOffButton">OFF</button>
+        
+        Left Arm:
+        <button type="button" id="animationWaveLOnButton">ON</button>
+        <button type="button" id="animationWaveLOffButton">OFF</button>
         </p>
         <p>
         Camera Angle <input type="range" min="0" max="360" value="10" class="slider" id="angleSlide">
         </p>
+        <!-- <p>
+        Vertical Angle <input type="range" min="0" max="360" value="10" class="slider" id="verSlide">
+        </p> -->
     </div>
     
 

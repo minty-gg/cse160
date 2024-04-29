@@ -98,13 +98,34 @@ const CIRCLE = 2;
 let g_selectedColor=[1.0,1.0,1.0,1.0];
 let g_selectedSize=5;
 let g_selectedType=POINT;
-let g_globalAngle=0;
-let g_yellowAngle=0;
-let g_magentaAngle=0;
-let g_yellowAnimation = false;
-let g_magentaAnimation = false;
-//let g_selectedSegment=5;
-//let g_fish = false;
+let g_horAngle=0;
+let g_verAngle=0;
+
+let g_waveLAngle=0;
+let g_waveRAngle=0;
+let g_waveLAnimation = false;
+let g_waveRAnimation = false;
+
+let vertical = false;
+let horizontal = false;
+
+
+
+function resetAll() {
+
+  g_horAngle=0;
+  g_verAngle=0;
+
+  g_waveLAngle=0;
+  g_waveRAngle=0;
+  g_waveLAnimation = false;
+  g_waveRAnimation = false;
+
+  vertical = false;
+  horizontal = false;
+
+  renderAllShapes();
+}
 
 // Set up actions for the HTML UI elements
 function addActionsForHtmlUI() {
@@ -114,17 +135,18 @@ function addActionsForHtmlUI() {
   // if only call g_shapesList(), it only resets list but doesn't clear canvas until your next click to add a point to canvas
   
 	// Button Events
-	document.getElementById('animationYellowOnButton').onclick = function() {g_yellowAnimation = true;};
-	document.getElementById('animationYellowOffButton').onclick = function() {g_yellowAnimation = false;};
-	document.getElementById('animationMagentaOnButton').onclick = function() {g_magentaAnimation = true;};
-	document.getElementById('animationMagentaOffButton').onclick = function() {g_magentaAnimation = false;};
+  document.getElementById('reset').onclick = function() {resetAll(); };
+	document.getElementById('animationWaveLOnButton').onclick = function() {g_waveLAnimation = true;};
+	document.getElementById('animationWaveLOffButton').onclick = function() {g_waveLAnimation = false;};
+	document.getElementById('animationWaveROnButton').onclick = function() {g_waveRAnimation = true;};
+	document.getElementById('animationWaveROffButton').onclick = function() {g_waveRAnimation = false;};
 
   // Color Slider Events
-  document.getElementById('yellowSlide').addEventListener('mousemove', function() { g_yellowAngle = this.value; renderAllShapes(); });
-	document.getElementById('magentaSlide').addEventListener('mousemove', function() { g_magentaAngle = this.value; renderAllShapes(); });
+  //document.getElementById('yellowSlide').addEventListener('mousemove', function() { g_yellowAngle = this.value; renderAllShapes(); });
+	//document.getElementById('magentaSlide').addEventListener('mousemove', function() { g_magentaAngle = this.value; renderAllShapes(); });
   // Size Slider Events
-  document.getElementById('angleSlide').addEventListener('mousemove', function() { g_globalAngle = this.value; renderAllShapes(); });
-  //document.getElementById('segmentSlide').addEventListener('mouseup', function() { g_selectedSegment = this.value; });
+  document.getElementById('angleSlide').addEventListener('mousemove', function() { g_horAngle = this.value; horizontal = true; renderAllShapes(); });
+  //document.getElementById('verSlide').addEventListener('mousemove', function() { g_verAngle = this.value; vertical = true; renderAllShapes(); });
 }
 
 // MAIN FUNCTION
@@ -178,11 +200,12 @@ function tick() {
 
 // Update the angle of everything if currently animated:
 function updateAnimationAngles() {
-	if (g_yellowAnimation) {
-		g_yellowAngle = 45*Math.sin(g_seconds);
+	if (g_waveLAnimation) {
+		// g_waveLAngle = 10*Math.tan(g_seconds); // this could be an arm slash animation LOL
+    g_waveLAngle = 10*Math.sin(g_seconds);
 	}
-	if (g_magentaAnimation) {
-		g_magentaAngle = 45*Math.sin(3*g_seconds);
+	if (g_waveRAnimation) {
+		g_waveRAngle = 10*Math.cos(g_seconds);
 	}
 }
 
@@ -239,7 +262,17 @@ function renderAllShapes() {
 	var startTime = performance.now();
 
 	// Pass the matrix to u_ModelMatrix attribute
-	var globalRotMat = new Matrix4().rotate(g_globalAngle, 0.0, 1.0, 0.0);
+  //if (horizontal) {
+    var globalRotMat = new Matrix4().rotate(g_horAngle, 0.0, 1.0, 0.0);
+  //}
+  //else { 
+    //if (vertical){
+    //var globalRotMat = new Matrix4().rotate(1.0, 0.0, g_verAngle * (Math.PI/180), 0.0);
+    //}
+  //}
+  //horizontal = false;
+  //vertial = false;
+	
 	gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
 	// Clear <canvas>
@@ -308,17 +341,112 @@ function renderAllShapes() {
   body.matrix.scale(0.4, 0.4, 0.25);
   body.render();
 
-  // upper parts of his body, can do later
+
+  // these could be made into a cylinder
+  // left upper parts of his body (the little bumps)
   var bodyL = new Cube();
+  bodyL.color = [135/255, 201/255, 197/255, 1];
+  bodyL.matrix.translate(-0.25, 0.03, -0.02);
+  bodyL.matrix.rotate(-70, 0, 0, 1);
+  bodyL.matrix.scale(0.1, 0.1, 0.16);
+  bodyL.render();
+
+  var bodyL2 = new Cube();
+  bodyL2.color = [135/255, 201/255, 197/255, 1];
+  bodyL2.matrix.translate(-0.27, 0.03, -0.02);
+  bodyL2.matrix.rotate(-90, 0, 0, 1);
+  bodyL2.matrix.scale(0.1, 0.1, 0.16);
+  bodyL2.render();
+
+  var bodyL3 = new Cube();
+  bodyL3.color = [135/255, 201/255, 197/255, 1];
+  bodyL3.matrix.translate(-0.139, 0.039, -0.02);
+  bodyL3.matrix.rotate(-105, 0, 0, 1);
+  bodyL3.matrix.scale(0.1, 0.1, 0.16);
+  bodyL3.render();
+
+  // right upper parts of his body
   var bodyR = new Cube();
+  bodyR.color = [135/255, 201/255, 197/255, 1];
+  bodyR.matrix.translate(0.21, -0.07, -0.02);
+  bodyR.matrix.rotate(70, 0, 0, 1);
+  bodyR.matrix.scale(0.1, 0.1, 0.16);
+  bodyR.render();
 
-  var armL = new Cube();
-  var fingerL = new Cube();
-  var fingerR = new Cube();
-  var armR = new Cube();
+  var bodyR2 = new Cube();
+  bodyR2.color = [135/255, 201/255, 197/255, 1];
+  bodyR2.matrix.translate(0.27, -0.075, -0.02);
+  bodyR2.matrix.rotate(90, 0, 0, 1);
+  bodyR2.matrix.scale(0.1, 0.1, 0.16);
+  bodyR2.render();
 
+  var bodyR3 = new Cube();
+  bodyR3.color = [135/255, 201/255, 197/255, 1];
+  bodyR3.matrix.translate(0.05, -0.087, -0.02);
+  bodyR3.matrix.rotate(10, 0, 0, 1);
+  bodyR3.matrix.scale(0.1, 0.1, 0.16);
+  bodyR3.render();
+
+  // left arm and finger (connected)
+  var armL = new Cylinder();
+  
+  armL.matrix.rotate(-g_waveLAngle, 0, 0, 1); // animation
+  var armLcoords = new Matrix4(armL.matrix);  // intermediate matrix
+
+  armL.matrix.translate(-0.2, -0.02, 0.06)
+  armL.matrix.rotate(-100, -190, 140, 1);
+  armL.matrix.scale(0.1, 0.1, 0.07);
+  armL.render();
+  // left finger
+  var fingerL = new Cone();
+  fingerL.color = [1, 1, 1, 1];
+  fingerL.matrix = armLcoords;
+  fingerL.matrix.translate(-0.285, -0.13, 0.04);
+  fingerL.matrix.rotate(-90, -190, 140, 1);
+  fingerL.matrix.scale(0.1, 0.1, 0.1);
+  fingerL.render();
+
+
+  // right arm and finger (coonected)
+  var armR = new Cylinder();
+  armR.matrix.rotate(-g_waveRAngle, 0, 0, 1);
+  var armRcoords = new Matrix4(armR.matrix);
+
+  armR.matrix.translate(0.2, -0.03, 0.05);
+  armR.matrix.rotate(100, 190, 140, 1);
+  armR.matrix.scale(0.1, 0.1, 0.07);
+  armR.render();
+
+  var fingerR = new Cone();
+  fingerR.color = [1, 1, 1,1];
+  fingerR.matrix = armRcoords;
+  fingerR.matrix.translate(0.285, -0.14, 0.03);
+  fingerR.matrix.rotate(90, 190, 140, 1);
+  fingerR.matrix.scale(0.1, 0.1, 0.1);
+  fingerR.render();
+
+
+  // feet
   var footL = new Cube();
+  footL.color = [57/255, 88/255, 132/255, 1];
+  footL.matrix.translate(-0.245, -0.45, -0.1);
+  footL.matrix.rotate(-20, 0, 20, 1);
+  footL.matrix.scale(0.2, 0.08, 0.15);
+  footL.render();
+
   var footR = new Cube();
+  footR.color = [57/255, 88/255, 132/255, 1];
+  footR.matrix.translate(0.1, -0.45, -0.1);
+  footR.matrix.rotate(-20, 0, 20, 1);
+  footR.matrix.scale(0.2, 0.08, 0.15);
+  footR.render();
+
+  var tail = new Cube();
+  tail.color = [57/255, 88/255, 132/255, 1];
+  tail.matrix.translate(-0.1, -0.38, 0.1);
+  tail.matrix.scale(0.2, 0.1, 0.4);
+  tail.render();
+
 
 // ------------------
 	// Draw a cube
@@ -330,26 +458,26 @@ function renderAllShapes() {
 	//body.render();
 
 	// Draw a left arm
-	var yellow = new Cube();
-	yellow.color = [1.0, 1.0, 0.0, 1.0];
-	yellow.matrix.setTranslate(0.0, -0.5, 0.0);
-	yellow.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
-	yellow.matrix.rotate(-g_yellowAngle, 0.0, 0.0, 1.0);
+	// var yellow = new Cube();
+	// yellow.color = [1.0, 1.0, 0.0, 1.0];
+	// yellow.matrix.setTranslate(0.0, -0.5, 0.0);
+	// yellow.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
+	// yellow.matrix.rotate(-g_yellowAngle, 0.0, 0.0, 1.0);
 
 	
-	var yellowCoordinatesMat = new Matrix4(yellow.matrix);	// an intermediate matrix
-	yellow.matrix.scale(0.25, 0.7, 0.5);
-	yellow.matrix.translate(-0.5, 0.0, 0.0);
-	//yellow.render();
+	// var yellowCoordinatesMat = new Matrix4(yellow.matrix);	// an intermediate matrix
+	// yellow.matrix.scale(0.25, 0.7, 0.5);
+	// yellow.matrix.translate(-0.5, 0.0, 0.0);
+	// //yellow.render();
 
-	// test magenta (magenta)
-	var magenta = new Cube();
-	magenta.color = [1.0, 0.0, 1.0, 1.0];
-	magenta.matrix = yellowCoordinatesMat;
-	magenta.matrix.translate(0.0, 0.65, 0.0);
-	magenta.matrix.rotate(g_magentaAngle, 0, 0, 1);
-	magenta.matrix.scale(0.3, 0.3, 0.3);
-	magenta.matrix.translate(-0.5, 0.0, -0.001);
+	// // test magenta (magenta)
+	// var magenta = new Cube();
+	// magenta.color = [1.0, 0.0, 1.0, 1.0];
+	// magenta.matrix = yellowCoordinatesMat;
+	// magenta.matrix.translate(0.0, 0.65, 0.0);
+	// magenta.matrix.rotate(g_magentaAngle, 0, 0, 1);
+	// magenta.matrix.scale(0.3, 0.3, 0.3);
+	// magenta.matrix.translate(-0.5, 0.0, -0.001);
 	//magenta.matrix.rotate(-30, 1.0, 0.0, 0.0);
 	//magenta.matrix.scale(0.2, 0.4, 0.2);
 	//magenta.render();
