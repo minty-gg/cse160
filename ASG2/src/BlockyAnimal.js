@@ -146,7 +146,7 @@ function addActionsForHtmlUI() {
 	//document.getElementById('magentaSlide').addEventListener('mousemove', function() { g_magentaAngle = this.value; renderAllShapes(); });
   // Size Slider Events
   document.getElementById('angleSlide').addEventListener('mousemove', function() { g_horAngle = this.value; horizontal = true; renderAllShapes(); });
-  //document.getElementById('verSlide').addEventListener('mousemove', function() { g_verAngle = this.value; vertical = true; renderAllShapes(); });
+  document.getElementById('verSlide').addEventListener('mousemove', function() { g_verAngle = this.value; vertical = true; renderAllShapes(); });
 }
 
 // MAIN FUNCTION
@@ -263,7 +263,8 @@ function renderAllShapes() {
 
 	// Pass the matrix to u_ModelMatrix attribute
   //if (horizontal) {
-    var globalRotMat = new Matrix4().rotate(g_horAngle, 0.0, 1.0, 0.0);
+  var globalRotMat = new Matrix4().rotate(g_horAngle, 0.0, 1.0, 0.0); // y axis
+  globalRotMat.rotate(g_verAngle, 1, 0, 0);   // x axis
   //}
   //else { 
     //if (vertical){
