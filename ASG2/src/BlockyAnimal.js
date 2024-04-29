@@ -23,7 +23,7 @@ let a_Position;
 let u_FragColor; 
 let u_Size;
 let u_ModelMatrix;
-let u_GlobalRotateMatrix
+let u_GlobalRotateMatrix;
 
 function setupWebGL() {
   // Retrieve <canvas> element
@@ -147,7 +147,7 @@ function main() {
 
   // Specify the color for clearing <canvas>
   // canvas backgorund color is black
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearColor(90/255, 90/255, 90/255, 1.0);
 
   // Clear <canvas>
   // gl.clear(gl.COLOR_BUFFER_BIT);
@@ -247,37 +247,100 @@ function renderAllShapes() {
 	gl.clear(gl.COLOR_BUFFER_BIT );
 	gl.enable(gl.DEPTH_TEST);
 
-	// drawTriangle3D( [-1.0, 0.0, 0.0,   -0.5, -1.0, 0.0,  0.0, 0.0, 0.0] );
+	// my blocky animal
+  var head = new Cube();
+  head.color = [1, 1, 1, 1];
+  head.matrix.translate(-0.25, 0, 0);
+  head.matrix.scale(0.5, 0.4, 0.25);
+  head.render();
 
+  var nose = new Cube();
+  nose.color = [130/255, 75/255, 0, 1];
+  nose.matrix.setTranslate(-0.073, 0.1, -0.05);
+  nose.matrix.scale(0.12, 0.08, 0.1);
+  nose.render();
+
+  // mouth: can do later (need two vars)
+
+  var eyeL = new Cube();
+  eyeL.color = [0, 0, 0, 1];
+  eyeL.matrix.setTranslate(-0.185, 0.2, -0.025);
+  eyeL.matrix.scale(0.07, 0.07, 0.05);
+  eyeL.render();
+
+  var eyeR = new Cube();
+  eyeR.color = [0, 0, 0, 1];
+  eyeR.matrix.setTranslate(0.089, 0.2, -0.025);
+  eyeR.matrix.scale(0.07, 0.07, 0.05);
+  eyeR.render();
+
+  var eyeDotL = new Cube();
+  eyeDotL.color = [1, 1, 1, 1];
+  eyeDotL.matrix.setTranslate(-0.15, 0.24, -0.02511);
+  eyeDotL.matrix.scale(0.02, 0.02, 0.03);
+  eyeDotL.render();
+
+  var eyeDotR = new Cube();
+  eyeDotR.color = [1, 1, 1, 1];
+  eyeDotR.matrix.setTranslate(0.099, 0.24, -0.02511);
+  eyeDotR.matrix.scale(0.02, 0.02, 0.03);
+  eyeDotR.render();
+
+  var earL = new Cube();
+  earL.color = [57/255, 88/255, 132/255, 1];
+  earL.matrix.setTranslate(-0.28, 0.42, -0.001);
+  earL.matrix.rotate(-90, 0, 0, 1);
+  earL.matrix.scale(0.14, 0.14, 0.26);
+  earL.renderT();
+
+  // base of right ear
+  var earR = new Cube();
+  earR.color = [57/255, 88/255, 132/255, 1];
+  earR.matrix.setTranslate(0.28, 0.42, -0.001);
+  earR.matrix.rotate(180, 0, 0, 1);
+  earR.matrix.scale(0.14, 0.14, 0.26);
+  earR.renderT();
+
+  // body
+  var body = new Cube();
+  body.color = [135/255, 201/255, 197/255, 1];
+  body.matrix.translate(-0.2, -0.4, -0.001);
+  body.matrix.scale(0.4, 0.4, 0.25);
+  body.render();
+
+  // upper parts of his body, can do later
+  var bodyL = new Cube();
+  var bodyR = new Cube();
+
+  var armL = new Cube();
+  var fingerL = new Cube();
+  var fingerR = new Cube();
+  var armR = new Cube();
+
+  var footL = new Cube();
+  var footR = new Cube();
+
+// ------------------
 	// Draw a cube
-	var body = new Cube();
-	body.color = [1.0, 0.0, 0.0, 1.0];
-	body.matrix.translate(-0.25, -0.75, 0.0);
-	body.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
-	body.matrix.scale(0.5, 0.3, 0.5);
-	body.render();
+	// var body = new Cube();
+	// body.color = [1.0, 0.0, 0.0, 1.0];
+	// body.matrix.translate(-0.25, -0.75, 0.0);
+	// body.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
+	// body.matrix.scale(0.5, 0.3, 0.5);
+	//body.render();
 
 	// Draw a left arm
 	var yellow = new Cube();
 	yellow.color = [1.0, 1.0, 0.0, 1.0];
 	yellow.matrix.setTranslate(0.0, -0.5, 0.0);
 	yellow.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
-
 	yellow.matrix.rotate(-g_yellowAngle, 0.0, 0.0, 1.0);
-
-	// putting this animation logic into a separate function 
-	// if (g_yellowAnimation) {
-	// 	yellow.matrix.rotate(45*Math.sin(g_seconds), 0, 0, 1);
-	// }
-	// else {
-	// 	yellow.matrix.rotate(-g_yellowAngle, 0.0, 0.0, 1.0);
-	// }
 
 	
 	var yellowCoordinatesMat = new Matrix4(yellow.matrix);	// an intermediate matrix
 	yellow.matrix.scale(0.25, 0.7, 0.5);
 	yellow.matrix.translate(-0.5, 0.0, 0.0);
-	yellow.render();
+	//yellow.render();
 
 	// test magenta (magenta)
 	var magenta = new Cube();
@@ -289,17 +352,18 @@ function renderAllShapes() {
 	magenta.matrix.translate(-0.5, 0.0, -0.001);
 	//magenta.matrix.rotate(-30, 1.0, 0.0, 0.0);
 	//magenta.matrix.scale(0.2, 0.4, 0.2);
-	magenta.render();
+	//magenta.render();
 	 
 	// A bunch of rotating cubes
-	var K = 10.0;
-	for (var i = 1; i < K; i++) {
-		var c = new Cube();
-		c.matrix.translate(-0.8, 1.9*i/K-1.0, 0);
-		c.matrix.rotate(g_seconds*100, 1, 1, 1);
-		c.matrix.scale(0.1, 0.5/K, 1.0/K);
-		//c.render();
-	}
+	// var K = 10.0;
+	// for (var i = 1; i < K; i++) {
+	// 	var c = new Cube();
+	// 	c.matrix.translate(-0.8, 1.9*i/K-1.0, 0);
+	// 	c.matrix.rotate(g_seconds*100, 1, 1, 1);
+	// 	c.matrix.scale(0.1, 0.5/K, 1.0/K);
+	// 	//c.render();
+	// }
+// --------------------------------------------
 
 	// Check the time at the end of the function, and show on web page
 	var duration = performance.now() - startTime;
