@@ -100,15 +100,18 @@ let g_selectedSize=5;
 let g_selectedType=POINT;
 
 // slider angles
-let g_horAngle=0;
-let g_verAngle=0;
-let g_zAngle=0;
+// let g_horAngle=0;
+// let g_verAngle=0;
+// let g_zAngle=0;
+// let vertical = false;
+// let horizontal = false;
 
 // global mouse rotation
 let g_globalX = 0;
 let g_globalY=0;
 let g_globalZ=0;
 let g_origin = [0, 0];
+//let g_globalAngle=0;
 
 // arm/hand wave vars
 let g_waveLAngle=0;
@@ -116,8 +119,7 @@ let g_waveRAngle=0;
 let g_waveLAnimation = false;
 let g_waveRAnimation = false;
 
-let vertical = false;
-let horizontal = false;
+
 
 let g_leftHand = 0;
 let g_rightHand = 0;
@@ -130,11 +132,11 @@ let g_tailAngle = 0;
 // function to reset all variables back to their default values
 function resetAll() {
 
-  g_horAngle=0;
-  g_verAngle=0;
-  g_zAngle=0;
-  vertical = false;
-  horizontal = false;
+  //g_horAngle=0;
+  //g_verAngle=0;
+  //g_zAngle=0;
+  //vertical = false;
+  //horizontal = false;
 
   g_globalX=0;
   g_globalY=0;
@@ -175,8 +177,9 @@ function addActionsForHtmlUI() {
   
   
   // Size Slider Events
-  document.getElementById('angleSlide').addEventListener('mousemove', function() { g_horAngle = this.value; horizontal = true; renderAllShapes(); });
-  document.getElementById('verSlide').addEventListener('mousemove', function() { g_verAngle = this.value; vertical = true; renderAllShapes(); });
+  document.getElementById('angleSlide').addEventListener('mousemove', function() { g_globalY = this.value; renderAllShapes(); });
+  document.getElementById('verSlide').addEventListener('mousemove', function() { g_globalX = this.value; renderAllShapes(); });
+  document.getElementById('Z-axisSlide').addEventListener('mousemove', function() { g_globalZ = this.value; renderAllShapes(); });
 
   document.getElementById('leftArmSlide').addEventListener('mousemove', function() { g_leftArm = this.value; renderAllShapes(); });
 	document.getElementById('rightArmSlide').addEventListener('mousemove', function() { g_rightArm = this.value; renderAllShapes(); });
@@ -198,7 +201,7 @@ function main() {
 
   // Register function (event handler) to be called on a mouse press
   // assign an Event function to this variable and define it
-  canvas.onmousedown = origin;  // function(ev) {origin(ev)} // function(ev){ click(ev) };
+  canvas.onmousedown = originCoords;  // function(ev) {origin(ev)} // function(ev){ click(ev) };
   // canvas.onmousemove = click; // doesn't work properly
   canvas.onmousemove  = function(ev) { if(ev.buttons == 1) { click(ev) } }; // ev.button is set to 1 if button is held down
 
@@ -236,6 +239,8 @@ function tick() {
 // Update the angle of everything if currently animated:
 function updateAnimationAngles() {
 
+  // if idle animation
+
   // left arm move
 	if (g_waveLAnimation) {
 		// g_waveLAngle = 10*Math.tan(g_seconds); // this could be an arm slash animation LOL
@@ -268,29 +273,10 @@ var g_shapesList = [];
 function click(ev) {
 
   // Extract the event click and return it in WebGL coordinates
-
   let coordinates = convertCoordinatesEventToGL(ev);
-  
+  g_globalX = g_globalX - coordinates[0]*360;
+  g_globalY = g_globalY - coordinates[1]*360;
 
-  // Create and store the new point into shapes list
-  // let point;
-  // if (g_selectedType==POINT) {
-  //   point = new Point();
-  // }
-  // else if (g_selectedType==CIRCLE) {
-  //   point = new Circle();
-  // }
-  // else if (g_selectedType == TRIANGLE) {
-  //   point = new Triangle();
-  // }
-
-  // point.position = [x,y];
-  // point.color = g_selectedColor.slice();
-  // point.size = g_selectedSize;
-  // point.segment = g_selectedSegment;
-  // g_shapesList.push(point);
-
-  // Draw every shape that is supposed to be in the canvas
   renderAllShapes();
 }
 
@@ -308,12 +294,6 @@ function convertCoordinatesEventToGL(ev) {
   
   var x = ev.clientX; // x coordinate of a mouse pointer
   var y = ev.clientY; // y coordinate of a mouse pointer
-  // var rect = ev.target.getBoundingClientRect();
-
-  // x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
-  // y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
-
-  // return([x,y]);
   
   let temp = [x,y];
   x = (x - g_origin[0])/400;
@@ -334,8 +314,12 @@ function renderAllShapes() {
 
 	// Pass the matrix to u_ModelMatrix attribute
   //if (horizontal) {
-  var globalRotMat = new Matrix4().rotate(g_horAngle, 0.0, 1.0, 0.0); // y axis
-  globalRotMat.rotate(g_verAngle, 1, 0, 0);   // x axis
+  var globalRotMat = new Matrix4(); 
+  globalRotMat.rotate(g_globalX,1,0,0); // x-axis
+  globalRotMat.rotate(g_globalY,0,1,0); // y-axis
+  globalRotMat.rotate(g_globalZ,0,0,1); // z-axis
+
+
   //}
   //else { 
     //if (vertical){
@@ -357,6 +341,8 @@ function renderAllShapes() {
   head.color = [1, 1, 1, 1];
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
+
+  //head.matrix.rotate();
   head.render();
 
   var nose = new Cube();
@@ -364,8 +350,6 @@ function renderAllShapes() {
   nose.matrix.setTranslate(-0.073, 0.1, -0.06);
   nose.matrix.scale(0.12, 0.08, 0.1);
   nose.render();
-
-  // mouth: can do later (need two vars)
 
   var eyeL = new Cube();
   eyeL.color = [0, 0, 0, 1];
