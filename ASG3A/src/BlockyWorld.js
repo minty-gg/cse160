@@ -116,6 +116,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  // Get the storage location of u_ProjectionMatrix
+  u_ProjectionMatrix = gl.getUniformLocation(gl.program, 'u_ProjectionMatrix');
+  if (!u_ProjectionMatrix) {
+    console.log('Failed to get the storage location of u_ProjectionMatrix');
+    return;
+  }
   // Get the storage location of u_ViewMatrix
   u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
   if (!u_ViewMatrix) {
@@ -136,8 +142,6 @@ function connectVariablesToGLSL() {
     console.log('Failed to get the storage location of u_whichTexture');
     return false;
   }
-
-
 
   // Set an initial value for this matrix to identity
   var identityM = new Matrix4();
@@ -273,7 +277,6 @@ function sendImageToTEXTURE0(image) {
     console.log('Failed to create the texture object');
     return false;
   }
-
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
   // Enable texture unit0
@@ -433,10 +436,12 @@ function renderAllShapes() {
 
   // Pass the projection  matrix
   var projMat = new Matrix4();
+  projMat.setPerspective(90, canvas.width / canvas.height, 0.1, 100); // (90 deg wide, aspect = width/height, near plane = 0.1, far plane = 100)
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   // Pass the view matrix
   var viewMat = new Matrix4();
+  viewMat.setLookAt(0, 0, -1,   0, 0, 0,   0, 1, 0);  // (eye, at, up)
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
 
@@ -449,7 +454,7 @@ function renderAllShapes() {
 	gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
 	// Clear <canvas>
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	//gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.clear(gl.COLOR_BUFFER_BIT );
 	gl.enable(gl.DEPTH_TEST);
 
@@ -460,8 +465,6 @@ function renderAllShapes() {
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
   
-
-  //head.matrix.rotate();
   head.render();
 
   var nose = new Cube();
@@ -680,15 +683,15 @@ function renderAllShapes() {
 
 
 // ------------------
-	// Draw a cube
+	// //Draw a cube
 	// var body = new Cube();
 	// body.color = [1.0, 0.0, 0.0, 1.0];
 	// body.matrix.translate(-0.25, -0.75, 0.0);
 	// body.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
 	// body.matrix.scale(0.5, 0.3, 0.5);
-	//body.render();
+	// body.render();
 
-	// Draw a left arm
+	// //Draw a left arm
 	// var yellow = new Cube();
 	// yellow.color = [1.0, 1.0, 0.0, 1.0];
 	// yellow.matrix.setTranslate(0.0, -0.5, 0.0);
@@ -709,9 +712,9 @@ function renderAllShapes() {
 	// magenta.matrix.rotate(g_magentaAngle, 0, 0, 1);
 	// magenta.matrix.scale(0.3, 0.3, 0.3);
 	// magenta.matrix.translate(-0.5, 0.0, -0.001);
-	//magenta.matrix.rotate(-30, 1.0, 0.0, 0.0);
-	//magenta.matrix.scale(0.2, 0.4, 0.2);
-	//magenta.render();
+	// magenta.matrix.rotate(-30, 1.0, 0.0, 0.0);
+	// magenta.matrix.scale(0.2, 0.4, 0.2);
+	// magenta.render();
 	 
 	// A bunch of rotating cubes
 	// var K = 10.0;
