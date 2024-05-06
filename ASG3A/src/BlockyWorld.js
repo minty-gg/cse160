@@ -21,6 +21,7 @@ var FSHADER_SOURCE = `
   varying vec2 v_UV;
   uniform vec4 u_FragColor; 
   uniform sampler2D u_Sampler0;
+  uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   void main() {
 
@@ -34,6 +35,11 @@ var FSHADER_SOURCE = `
 
     else if (u_whichTexture == 0){
       gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
+    }
+
+    else if (u_whichTexture == 1) {
+      gl_FragColor = texture2D(u_Sampler1, v_UV);   // Use texture1
+
     }
 
     else {
@@ -53,6 +59,8 @@ let u_ModelMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
+let u_Sampler0;
+let u_Sampler1;
 let u_whichTexture;
 
 function setupWebGL() {
@@ -133,6 +141,12 @@ function connectVariablesToGLSL() {
   u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler0');
   if (!u_Sampler0) {
     console.log('Failed to get the storage location of u_Sampler0');
+    return false;
+  }
+
+  u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+  if (!u_Sampler1) {
+    console.log('Failed to get the storage location of u_Sampler1');
     return false;
   }
 
@@ -268,9 +282,18 @@ function initTextures() {
 
   // Add more texture loadings later (if needed)
 
+  var image2 = new Image();
+  if (!image2) {
+    console.log('Failed to create the image2 object');
+    return false;
+  }
+  image2.onload = function () { sendImageToTEXTURE1(image2); }
+  image2.src = 'grid.jpg';
+
   return true;
 }
 
+// TEXTURE0
 function sendImageToTEXTURE0(image) {
   var texture = gl.createTexture();
   if (!texture) {
@@ -292,10 +315,33 @@ function sendImageToTEXTURE0(image) {
 
   // Set the texture unit 0 to the sampler
   gl.uniform1i(u_Sampler0, 0);
+  //console.log('finished loadTexture');
+}
 
-  //gl.clear(gl.COLOR_BUFFER_BIT);  // clear <canvas>
-  //gl.drawARRAYS(gl.TRIANGLE_STRIP, 0, n);   // Draw the rectangle
-  console.log('finished loadTexture');
+// TEXTURE1
+function sendImageToTEXTURE1(image) {
+  var texture = gl.createTexture();
+  if (!texture) {
+    console.log('Failed to create the texture object');
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
+  // Enable texture unit0
+  gl.activeTexture(gl.TEXTURE1);  // total of 8 texture units 
+  // Bind the texture object to the targeet
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  // Set the texture image
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  // Set the texture unit 0 to the sampler
+  gl.uniform1i(u_Sampler1, 1);
+
+  //console.log('finished loadTexture');
 }
 
 
@@ -317,6 +363,8 @@ function main() {
   //canvas.onmousedown = originCoords;  // function(ev) {origin(ev)} // function(ev){ click(ev) };
   // // canvas.onmousemove = click; // doesn't work properly
   //canvas.onmousemove  = function(ev) { if(ev.buttons == 1) { click(ev) } }; // ev.button is set to 1 if button is held down
+  
+  document.onkeydown = keydown;
 
   initTextures();
 
@@ -358,7 +406,7 @@ function updateAnimationAngles() {
   if (g_idleAnimation) {
     g_idleBody = 10*Math.cos(g_seconds);
     g_waveLAngle = 10*Math.cos(g_seconds);
-    g_waveRAngle = 10* Math.cos(g_seconds);
+    g_waveRAngle = 10*Math.cos(g_seconds);
     g_tailAngle = 10*Math.cos(g_seconds);
     g_idleFeet = 15*Math.cos(g_seconds);
   }
@@ -379,10 +427,7 @@ function updateAnimationAngles() {
     g_tailAngle = 10*Math.cos(g_seconds);
 
   }
-
-
 }
-
 
 // a list of shapes that stores a list of points 
 var g_shapesList = [];
@@ -426,6 +471,69 @@ function convertCoordinatesEventToGL(ev) {
 }
 
 
+// variables to control where our camera will look at
+var g_eye = [0, 0, 3];
+var g_at = [0, 0, -100];
+var g_up = [0, 1, 0];
+var g_camera = new Camera();
+
+// to move around with WASD 
+function keydown(ev) {
+  // W = 87, A = 65, S = 83, D = 68
+  // dunno why but i had to reverse the left and right's +/- 
+  if (ev.keyCode == 65) {   // right 
+    g_camera.eye.elements[0] -= 0.2;
+  }
+  else if (ev.keyCode == 68) {  // left
+    g_camera.eye.elements[0] += 0.2;
+  }
+
+  else if (ev.keyCode == 83) {  // back
+    g_camera.eye.elements[2] += 0.2;
+  }
+
+  else if (ev.keyCode == 87) {
+    g_camera.eye.elements[2] -= 0.2;  // forward
+  }
+  
+  renderAllShapes();
+  console.log(ev.keyCode);
+}
+
+// map for canvas idk
+var g_map = [
+[1, 1, 1, 1, 1, 1, 1, 1],
+[1, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 1, 1, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 1, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 0, 0, 0, 0, 1],
+];
+
+// vid 3.10 progres..
+function drawMap() {
+  for (x = 0; x < 32; x++) {
+    for (y = 0; y < 32; y++) {
+      //console.log(x,y);
+      //if (g_map[x][y] ==  1) {
+      if (x < 1 || x == 31 || y == 0 || y ==31) {
+
+        // the walls?? 
+        var wall = new Cube();
+        wall.color = [0.8, 1.0, 1.0, 1.0];
+        //wall.color = [1.0, 1.0, 1.0, 1.0];
+        wall.textureNum = -2;
+        wall.matrix.translate(0, -0.75, 0);
+        wall.matrix.scale(0.4, 0.4, 0.4);
+        wall.matrix.translate(x-16, 0, y-16);
+        wall.render();
+      
+      }
+    }
+  }
+}
 
 // Draw every shape that is supposed to be in the canvas
 // aka renderScene()
@@ -436,12 +544,18 @@ function renderAllShapes() {
 
   // Pass the projection  matrix
   var projMat = new Matrix4();
-  projMat.setPerspective(90, canvas.width / canvas.height, 0.1, 100); // (90 deg wide, aspect = width/height, near plane = 0.1, far plane = 100)
+  projMat.setPerspective(50, 1*canvas.width/canvas.height, 1, 100); // (90 deg wide, aspect = width/height, near plane = 0.1, far plane = 100)
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   // Pass the view matrix
   var viewMat = new Matrix4();
-  viewMat.setLookAt(0, 0, -1,   0, 0, 0,   0, 1, 0);  // (eye, at, up)
+  //viewMat.setLookAt(g_eye[0], g_eye[1], g_eye[2],   g_at[0], g_at[1], g_at[2],   g_up[0], g_up[1], g_up[2]);  // (eye, at, up)
+  
+  viewMat.setLookAt(
+    g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2],
+    g_camera.at.elements[0],  g_camera.at.elements[1],  g_camera.at.elements[2],
+    g_camera.up.elements[0],  g_camera.up.elements[1],  g_camera.up.elements[2]);
+  
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
 
@@ -452,21 +566,42 @@ function renderAllShapes() {
   globalRotMat.rotate(g_globalZ,0,0,1); // z-axis
 	
 	gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
-
+  
+  
 	// Clear <canvas>
-	//gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.clear(gl.COLOR_BUFFER_BIT );
-	gl.enable(gl.DEPTH_TEST);
+	//gl.enable(gl.DEPTH_TEST); // do not uncomment this causes z-fighting on the floor!!
 
-	// my blocky animal
+  // Copilot told me to consider drawing the sky first then the floor etc
+  // ==== DRAW THE SKY ======
+  var sky = new Cube();
+  sky.color = [1.0, 0.0, 0.0, 1.0];
+  sky.textureNum = 0;
+  sky.matrix.scale(50, 50, 50);
+  sky.matrix.translate(-0.5, -0.5, -0.5);
+  sky.render();
+
+  // == DRAW THE FLOOR ==
+  var floor = new Cube();
+  floor.color = [1.0, 0.0, 0.0, 1.0];
+  floor.textureNum = 1;
+  floor.matrix.translate(0, -0.75, 0.0);
+  floor.matrix.scale(10, 0, 10);
+  floor.matrix.translate(-0.5, 0.0, -0.5);
+  floor.render();
+
+  // ========================
+  drawMap();
+
+	// MY BLOCKY ANIMAL:
   var head = new Cube();
   head.color = [1, 1, 1, 1];
   head.textureNum = 0;    // sets to texture num
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
-  
   head.render();
-
+  
   var nose = new Cube();
   nose.color = [184/255, 122/255, 45/255, 1];
   nose.matrix.setTranslate(-0.07, 0.1, -0.06);
@@ -617,6 +752,7 @@ function renderAllShapes() {
   // feet
   var footL = new Cube();
   footL.color = [57/255, 88/255, 132/255, 1];
+  footL.textureNum = 0;
   footL.matrix.setTranslate(-0.245, -0.45, -0.1);
   footL.matrix.rotate(-20, 0, 20, 1);
   footL.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
@@ -626,6 +762,7 @@ function renderAllShapes() {
   // uhh smth is wrong with the right foot i wanna push it back ;-;
   var footR = new Cube();
   footR.color = [57/255, 88/255, 132/255, 1];
+  footR.textureNum = 0;
   footR.matrix.translate(0.07, -0.45, -0.05);
   footR.matrix.rotate(-30, 0, -20, 1);
   footR.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
@@ -679,7 +816,6 @@ function renderAllShapes() {
   shellTop.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
   shellTop.matrix.scale(0.2, 0.2, 0.1);
   shellTop.render();
-
 
 
 // ------------------

@@ -56,11 +56,34 @@ function drawTriangle(vertices) {//initVertexBuffers(gl) {
   }
   
 
+  var g_vertexBuffer = null;
+  function initTriangle3D() {
+    g_vertexBuffer = gl.createBuffer();
+    if (!g_vertexBuffer) {
+      console.log('Failed to create the buffer object');
+      return -1;
+    }
+  
+    // Bind the buffer object to target
+    gl.bindBuffer(gl.ARRAY_BUFFER, g_vertexBuffer);
+    // Write date into the buffer object
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+    
+    // Assign the buffer object to a_Position variable
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0); // last two 0's = offset and stride (only if you use interleaved? but prof does not recc so set to 0)
+    // the param 2: means we have 2 elements per vertice (x and y coord)
+  
+    // Enable the assignment to a_Position variable
+    // this turns back the triangles on after the Point.js disables this to draw points
+    gl.enableVertexAttribArray(a_Position);
+
+  }
   // draw Triangles in 3D
   function drawTriangle3D(vertices) {//initVertexBuffers(gl) {
 
-    var n = 3; // The number of vertices
-  
+    var n = vertices.length/3; // The number of vertices
+    //initTriangle3D();
+
     // Create a buffer object
     var vertexBuffer = gl.createBuffer(); // making a buffer on the GPU
     if (!vertexBuffer) {
