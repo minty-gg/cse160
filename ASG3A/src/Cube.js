@@ -63,7 +63,7 @@ class Cube{
         //var size = this.size;
 
         // Pass the texure number
-        // gl.uniform1i(u_whichTexture, this.textureNum);
+        //gl.uniform1i(u_whichTexture, this.textureNum);
 
         // Pass the color of a point to u_FragColor variable
         gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -116,6 +116,7 @@ class Cube{
         //drawTriangle3DUV( [1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [0.0, 0.0, 0.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
         allverts = allverts.concat( [1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
+        
         drawTriangle3D(allverts);
 
     }

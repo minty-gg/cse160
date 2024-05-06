@@ -514,8 +514,8 @@ var g_map = [
 
 // vid 3.10 progres..
 function drawMap() {
-  for (x = 0; x < 32; x++) {
-    for (y = 0; y < 32; y++) {
+  for (x = 0; x < 16; x++) {
+    for (y = 0; y < 16; y++) {
       //console.log(x,y);
       //if (g_map[x][y] ==  1) {
       if (x < 1 || x == 31 || y == 0 || y ==31) {
@@ -526,9 +526,9 @@ function drawMap() {
         //wall.color = [1.0, 1.0, 1.0, 1.0];
         wall.textureNum = -2;
         wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.4, 0.4, 0.4);
-        wall.matrix.translate(x-16, 0, y-16);
-        wall.render();
+        wall.matrix.scale(0.3, 0.3, 0.3);
+        wall.matrix.translate(x-8, 0, y-8);
+        wall.renderfast();
       
       }
     }
