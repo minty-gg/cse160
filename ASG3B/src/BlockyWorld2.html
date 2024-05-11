@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Blocky 3D World</title>
+
+  </head>
+
+  <body onload="main()">
+
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Point.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Cone.js"></script>
+    <script src="Cylinder.js"></script>
+    <script src="Camera.js"></script>
+    <script src="BlockyWorld2.js"></script>
+
+    <div id="student-info" style="float: right; padding-right: 20px;">
+      
+      <p>Name: Tiffany Guan</p>
+      <p>Email: tijguan@ucsc.edu</p>
+      <br>
+      
+      
+    </div>
+
+    <div class="container" style="height: 425px; width: 500px;">
+      <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+      </canvas>
+      <p>Oshawott!</p>
+    </div>
+
+    
+    <br>
+    <br>
+    <p id="numdot"></p>
+
+    <!-- For shitf click animation, it could be the math.tan thing; click on oshawott make him mad and lash out at u with his arm-->
+
+    <div class="3d-sliders-buttons">
+      <button id="reset">Reset Animation</button>
+      <button id="idle">Idle Animation</button>
+        <p>
+          
+        Left Arm   <input type="range" min="0" max="90" value="0" class="slider" id="leftArmSlide">
+        Right Arm  <input type="range" min="0" max="90" value="0" class="slider" id="rightArmSlide">
+        Left Hand <input type="range" min="0" max="20" value="0" class="slider" id="leftHSlide">
+        Right Hand <input type="range" min="0" max="20" value="0" class="slider" id="rightHSlide">
+         
+        </p>
+        
+        Right Wave:
+        <button type="button" id="animationWaveROnButton">ON</button>
+        <button type="button" id="animationWaveROffButton">OFF</button>
+        </p>
+        <p>
+        Left Wave:
+        <button type="button" id="animationWaveLOnButton">ON</button>
+        <button type="button" id="animationWaveLOffButton">OFF</button>
+        </p>
+
+        <p>
+        Tail:
+        <button type="button" id="animationTailOnButton">ON</button>
+        <button type="button" id="animationTailOffButton">OFF</button>
+        (Turn to the side to see this)
+        </p>
+
+        <p>
+        Horizontal Angle <input type="range" min="0" max="360" value="10" class="slider" id="angleSlide">
+        Vertical Angle <input type="range" min="0" max="360" value="10" class="slider" id="verSlide">
+        Z-axis Angle <input type="range" min="0" max="360" value="10" class="slider" id="Z-axisSlide">
+        
+    </div>
+    
+
+  </body>
+</html>
