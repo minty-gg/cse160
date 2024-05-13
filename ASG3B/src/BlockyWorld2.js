@@ -614,7 +614,7 @@ function renderAllShapes() {
   sky.textureNum = 0;
   sky.matrix.scale(50, 50, 50);
   sky.matrix.translate(-0.5, -0.5, -0.5);
-  sky.render();
+  sky.renderfast();
 
   // == DRAW THE FLOOR ==
   var floor = new Cube();
@@ -623,7 +623,7 @@ function renderAllShapes() {
   floor.matrix.translate(0, -0.75, 0.0);
   floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0.0, -0.5);
-  floor.render();
+  floor.renderfast();
 
   // ========================
   drawMap();
@@ -631,40 +631,40 @@ function renderAllShapes() {
 	// MY BLOCKY ANIMAL:
   var head = new Cube();
   head.color = [1, 1, 1, 1];
-  head.textureNum = 0;    // sets to texture num
+  head.textureNum = -1;    // sets to texture num
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
-  head.render();
+  head.renderfast();
   
   var nose = new Cube();
   nose.color = [184/255, 122/255, 45/255, 1];
   nose.matrix.setTranslate(-0.07, 0.1, -0.06);
   nose.matrix.scale(0.12, 0.08, 0.1);
-  nose.render();
+  nose.renderfast();
 
   var eyeL = new Cube();
   eyeL.color = [0, 0, 0, 1];
   eyeL.matrix.setTranslate(-0.185, 0.2, -0.025);
   eyeL.matrix.scale(0.07, 0.07, 0.05);
-  eyeL.render();
+  eyeL.renderfast();
 
   var eyeR = new Cube();
   eyeR.color = [0, 0, 0, 1];
   eyeR.matrix.setTranslate(0.089, 0.2, -0.025);
   eyeR.matrix.scale(0.07, 0.07, 0.05);
-  eyeR.render();
+  eyeR.renderfast();
 
   var eyeDotL = new Cube();
   eyeDotL.color = [1, 1, 1, 1];
   eyeDotL.matrix.setTranslate(-0.15, 0.24, -0.02511);
   eyeDotL.matrix.scale(0.02, 0.02, 0.03);
-  eyeDotL.render();
+  eyeDotL.renderfast();
 
   var eyeDotR = new Cube();
   eyeDotR.color = [1, 1, 1, 1];
   eyeDotR.matrix.setTranslate(0.099, 0.24, -0.02511);
   eyeDotR.matrix.scale(0.02, 0.02, 0.03);
-  eyeDotR.render();
+  eyeDotR.renderfast();
 
   var earL = new Cube();
   earL.color = [57/255, 88/255, 132/255, 1];
@@ -688,7 +688,7 @@ function renderAllShapes() {
   body.matrix.scale(0.4, 0.4, 0.25);
   
   body.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
-  body.render();
+  body.renderfast();
 
 
   // these could be made into a cylinder
@@ -698,21 +698,21 @@ function renderAllShapes() {
   bodyL.matrix.translate(-0.25, 0.03, -0.04);
   bodyL.matrix.rotate(-70, 0, 0, 1);
   bodyL.matrix.scale(0.1, 0.1, 0.16);
-  bodyL.render();
+  bodyL.renderfast();
 
   var bodyL2 = new Cube();
   bodyL2.color = [135/255, 201/255, 197/255, 1];
   bodyL2.matrix.translate(-0.27, 0.03, -0.04);
   bodyL2.matrix.rotate(-90, 0, 0, 1);
   bodyL2.matrix.scale(0.1, 0.1, 0.16);
-  bodyL2.render();
+  bodyL2.renderfast();
 
   var bodyL3 = new Cube();
   bodyL3.color = [135/255, 201/255, 197/255, 1];
   bodyL3.matrix.translate(-0.139, 0.039, -0.04);
   bodyL3.matrix.rotate(-105, 0, 0, 1);
   bodyL3.matrix.scale(0.1, 0.1, 0.16);
-  bodyL3.render();
+  bodyL3.renderfast();
 
   // right upper parts of his body
   var bodyR = new Cube();
@@ -720,14 +720,14 @@ function renderAllShapes() {
   bodyR.matrix.translate(0.21, -0.067, -0.04);
   bodyR.matrix.rotate(70, 0, 0, 1);
   bodyR.matrix.scale(0.1, 0.1, 0.16);
-  bodyR.render();
+  bodyR.renderfast();
 
   var bodyR2 = new Cube();
   bodyR2.color = [135/255, 201/255, 197/255, 1];
   bodyR2.matrix.translate(0.27, -0.07, -0.04);
   bodyR2.matrix.rotate(90, 0, 0, 1);
   bodyR2.matrix.scale(0.1, 0.1, 0.16);
-  bodyR2.render();
+  bodyR2.renderfast();
 
   var bodyR3 = new Cube();
   bodyR3.color = [135/255, 201/255, 197/255, 1];
@@ -786,7 +786,7 @@ function renderAllShapes() {
   // feet
   var footL = new Cube();
   footL.color = [57/255, 88/255, 132/255, 1];
-  footL.textureNum = 0;
+  footL.textureNum = -1;
   footL.matrix.setTranslate(-0.245, -0.45, -0.1);
   footL.matrix.rotate(-20, 0, 20, 1);
   footL.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
@@ -796,7 +796,7 @@ function renderAllShapes() {
   // uhh smth is wrong with the right foot i wanna push it back ;-;
   var footR = new Cube();
   footR.color = [57/255, 88/255, 132/255, 1];
-  footR.textureNum = 0;
+  footR.textureNum = -1;
   footR.matrix.translate(0.07, -0.45, -0.05);
   footR.matrix.rotate(-30, 0, -20, 1);
   footR.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
@@ -867,3 +867,6 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
   htmlElm.innerHTML = text; // send inner html to whatver the text was
 }
 
+// sources from HOF:
+// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html 
+// - 
