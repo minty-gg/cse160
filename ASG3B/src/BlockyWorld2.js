@@ -1,6 +1,3 @@
-// Part 2 of Blocky World
-
-
 // ColoredPoints.js (c) 2012 matsuda
 // Vertex shader program
 var VSHADER_SOURCE =`
@@ -281,7 +278,7 @@ function initTextures() {
   // Register the event handler to be called on loading an image
   image.onload = function() { sendImageToTEXTURE0(image); } // function runs after loading complete
   // Tell the browser to load an image
-  image.src = 'sky.jpg';
+  image.src = 'sky_cloud.jpg';
 
   // Add more texture loadings later (if needed)
 
@@ -291,7 +288,7 @@ function initTextures() {
     return false;
   }
   image2.onload = function () { sendImageToTEXTURE1(image2); }
-  image2.src = 'grid.jpg';
+  image2.src = 'grass_texture.jpeg';
 
   return true;
 }
@@ -511,6 +508,14 @@ function keydown(ev) {
     g_camera.at.elements[0] += 2;
     //g_camera.up.elements[2] += 0.2;
   }
+  // x = 88, z = 90
+  // for up and down angle
+  else if (ev.keyCode == 88) {
+    g_camera.at.elements[1] -= 2;   // rotate down?
+  }
+  else if (ev.keyCode == 90) {
+    g_camera.at.elements[1] += 2;   // rotate up?
+  }
 
   
   renderAllShapes();
@@ -520,7 +525,7 @@ function keydown(ev) {
 // map for canvas idk
 var g_map = [
 [1, 1, 1, 1, 1, 1, 1, 1],
-[1, 0, 0, 0, 0, 0, 0, 1],
+[1, 0, 0, 2, 2, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 1],
 [1, 0, 0, 1, 1, 0, 0, 1],
 [1, 0, 0, 0, 0, 0, 0, 1],
@@ -531,23 +536,34 @@ var g_map = [
 
 // vid 3.10 progres..
 function drawMap() {
-  for (x = 0; x < 16; x++) {
-    for (y = 0; y < 16; y++) {
-      //console.log(x,y);
-      //if (g_map[x][y] ==  1) {
-      if (x < 1 || x == 31 || y == 0 || y ==31) {
 
+  // create different size cubes for walls? with textures
+  // var wall = new Cube();
+  // wall.textureNum = -2;
+  // wall.color = [0.8, 1.0, 1.0, 1.0];
+  
+  // wall.matrix.translate(0, -0.75, 0);
+  // wall.matrix.scale(0.3, 0.3, 0.3);
+  
+
+  for (x = 0; x < 8; x++) {
+    for (y = 0; y < 8; y++) {
+      //console.log(x,y);
+      if (g_map[x][y] ==  1) {
+      //if (x < 1 || x == 31 || y == 0 || y ==31) {
         // the walls?? 
+        
+        //console.log("g[x][y] == 2")
         var wall = new Cube();
-        wall.color = [0.8, 1.0, 1.0, 1.0];
-        //wall.color = [1.0, 1.0, 1.0, 1.0];
         wall.textureNum = -2;
+        wall.color = [0.8, 1.0, 1.0, 1.0];
+        
         wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.3, 0.3, 0.3);
+        wall.matrix.scale(0.5, 0.5, 0.5);
+        
         wall.matrix.translate(x-8, 0, y-8);
-        wall.renderfast();
         //wall.render();
-      
+        wall.renderfast();
       }
     }
   }
@@ -836,51 +852,6 @@ function renderAllShapes() {
   shellTop.render();
 
 
-// ------------------
-	// //Draw a cube
-	// var body = new Cube();
-	// body.color = [1.0, 0.0, 0.0, 1.0];
-	// body.matrix.translate(-0.25, -0.75, 0.0);
-	// body.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
-	// body.matrix.scale(0.5, 0.3, 0.5);
-	// body.render();
-
-	// //Draw a left arm
-	// var yellow = new Cube();
-	// yellow.color = [1.0, 1.0, 0.0, 1.0];
-	// yellow.matrix.setTranslate(0.0, -0.5, 0.0);
-	// yellow.matrix.rotate(-5.0, 1.0, 0.0, 0.0);
-	// yellow.matrix.rotate(-g_yellowAngle, 0.0, 0.0, 1.0);
-
-	
-	// var yellowCoordinatesMat = new Matrix4(yellow.matrix);	// an intermediate matrix
-	// yellow.matrix.scale(0.25, 0.7, 0.5);
-	// yellow.matrix.translate(-0.5, 0.0, 0.0);
-	// //yellow.render();
-
-	// // test magenta (magenta)
-	// var magenta = new Cube();
-	// magenta.color = [1.0, 0.0, 1.0, 1.0];
-	// magenta.matrix = yellowCoordinatesMat;
-	// magenta.matrix.translate(0.0, 0.65, 0.0);
-	// magenta.matrix.rotate(g_magentaAngle, 0, 0, 1);
-	// magenta.matrix.scale(0.3, 0.3, 0.3);
-	// magenta.matrix.translate(-0.5, 0.0, -0.001);
-	// magenta.matrix.rotate(-30, 1.0, 0.0, 0.0);
-	// magenta.matrix.scale(0.2, 0.4, 0.2);
-	// magenta.render();
-	 
-	// A bunch of rotating cubes
-	// var K = 10.0;
-	// for (var i = 1; i < K; i++) {
-	// 	var c = new Cube();
-	// 	c.matrix.translate(-0.8, 1.9*i/K-1.0, 0);
-	// 	c.matrix.rotate(g_seconds*100, 1, 1, 1);
-	// 	c.matrix.scale(0.1, 0.5/K, 1.0/K);
-	// 	//c.render();
-	// }
-// --------------------------------------------
-
 	// Check the time at the end of the function, and show on web page
 	var duration = performance.now() - startTime;
 	sendTextToHTML(" ms: " + Math.floor(duration) + " fps: " + Math.floor(10000/duration)/10, "numdot");
@@ -895,3 +866,4 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
   }
   htmlElm.innerHTML = text; // send inner html to whatver the text was
 }
+
