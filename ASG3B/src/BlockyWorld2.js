@@ -1,3 +1,6 @@
+// Part 2 of Blocky World
+
+
 // ColoredPoints.js (c) 2012 matsuda
 // Vertex shader program
 var VSHADER_SOURCE =`
@@ -542,7 +545,7 @@ function drawMap() {
         wall.matrix.translate(0, -0.75, 0);
         wall.matrix.scale(0.3, 0.3, 0.3);
         wall.matrix.translate(x-8, 0, y-8);
-        //wall.renderfast();
+        wall.renderfast();
         //wall.render();
       
       }
@@ -892,4 +895,3 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
   }
   htmlElm.innerHTML = text; // send inner html to whatver the text was
 }
-
