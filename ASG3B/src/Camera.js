@@ -15,6 +15,7 @@ class Camera {
         this.eye = new Vector3([-4, 0, -8]);      // starting point for where 3D space is viewed
         this.at = new Vector3([0, 0, 100]);    // look at point at which you are looking at from the eye point
         this.up = new Vector3([0, 1, 0]);       // up direction in which the scene is viewed from. rotating head from eye point to match look at point
+        
     }
 
 
@@ -37,47 +38,111 @@ class Camera {
     }
 
     back() {
-        var f = this.eye.sub(this.at);
-        f = f.divide(f.length());
+        // == asgn doc way ==
+        var f = new Vector3();
+        f.set(this.eye);
+        f.sub(this.at);
+        f.normalize();
+        f.mul(0.2);
         this.at = this.at.add(f);
         this.eye = this.eye.add(f);
+        
+        // == VID WAY ===
+        // var f = this.eye.sub(this.at);
+        // f = f.divide(f.length());
+        // this.at = this.at.add(f);
+        // this.eye = this.eye.add(f);
     }
 
     left() {
-        var f = this.at.sub(this.eye);
-        f = f.divide(f.length());
 
-        var s = f.cross(this.up);
-        s = s.divide(s.length());
+        // == asgn doc way ==
 
+        var f = new Vector3();
+        f.set(this.at);
+        f.sub(this.eye);
+
+        var s = Vector3.cross(this.up, f);
+        s.normalize();
+        
+        s.mul(0.2);
         this.at = this.at.add(s);
         this.eye = this.eye.add(s);
+
+
+        // == VID WAY ==
+        // var f = this.at.sub(this.eye);
+        // f = f.divide(f.length());
+
+        // var s = f.cross(this.up);
+        // s = s.divide(s.length());
+
+        // this.at = this.at.add(s);
+        // this.eye = this.eye.add(s);
+
     }
 
     right() {
-        var f = this.at.sub(this.eye);
-        f = f.divide(f.length());
+        // == asgn doc way ==
+        var f = new Vector3();
+        f.set(this.at);
+        f.sub(this.eye);
 
-        var s = -f.cross(this.up);
-        s = s.divide(s.length());
-
+        var s = Vector3.cross(f, this.up);
+        s.normalize();
+        
+        s.mul(0.2);
         this.at = this.at.add(s);
         this.eye = this.eye.add(s);
+
+
+        // == VID WAY ===
+        // var f = this.at.sub(this.eye);
+        // f = f.div(f.length);
+
+        // var s = -f.cross(this.up);
+        // s = s.div(s.length);
+
+        // this.at = this.at.add(s);
+        // this.eye = this.eye.add(s);
     }
 
     // Q
-    // panLeft(){
-    //     var f = new Vector3();
-    //     f.set(this.at);
-    //     f.sub(this.eye);
+    panLeft(){
 
+        // let rotationMatrix = new Matrix4();
 
-    // }
+        // var f = new Vector3();
+        // f.set(this.at);
+        // f.sub(this.eye);
+
+        // var alpha = 1;
+        // rotationMatrix.setRotate(alpha, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
+        // var f_prime = rotationMatrix.multiplyVector3(f);
+        // this.at = this.eye.add(f_prime);
+        
+        // console.log("f_prime: ", f_prime);
+        // console.log("this.eye: ", this.eye)
+        // console.log("this.at: ", this.at);
+
+    }
 
     // // E
-    // panRight() {
+    panRight() {
+        // let rotationMatrix = new Matrix4();
 
-    // }
+        // var f = new Vector3();
+        // f.set(this.at);
+        // f.sub(this.eye);
+
+        // var alpha = -1;
+        // rotationMatrix.setRotate(alpha, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
+        // var f_prime = rotationMatrix.multiplyVector3(f);
+        // this.at = this.eye.add(f_prime);
+
+    }
 }
 
 // ==TO MOVE FORWARD:==

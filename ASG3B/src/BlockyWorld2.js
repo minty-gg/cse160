@@ -548,16 +548,19 @@ var g_shapesList = [];
 // to move around with WASD 
 function keydown(ev) {
   // W = 87, A = 65, S = 83, D = 68
-  // dunno why but i had to reverse the left and right's +/- 
-  if (ev.keyCode == 65) {   // right 
-    g_camera.eye.elements[0] += 0.2;
+  
+  if (ev.keyCode == 68) {   // right 
+    //g_camera.eye.elements[0] += 0.2;
+    g_camera.right();
   }
-  else if (ev.keyCode == 68) {  // left
-    g_camera.eye.elements[0] -= 0.2;
+  else if (ev.keyCode == 65) {  // left
+    //g_camera.eye.elements[0] -= 0.2;
+    g_camera.left();
   }
 
   else if (ev.keyCode == 83) {  // back
-    g_camera.eye.elements[2] -= 0.2;
+    //g_camera.eye.elements[2] -= 0.2;
+    g_camera.back();
   }
 
   else if (ev.keyCode == 87) {
@@ -569,6 +572,7 @@ function keydown(ev) {
   else if (ev.keyCode == 81) {
     g_camera.at.elements[0] += 5;
     //g_camera.up.elements[2] -= 0.2;
+    //g_camera.panLeft();
   }
 
   // else if keyCode is for E: rotate right
