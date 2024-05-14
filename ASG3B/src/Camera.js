@@ -1,12 +1,20 @@
 class Camera {
+
+    // oshawott's camera POV: 
+    // eye = [0, 0, -3]
+    // at = [0, 0, 100]
+    // up = [0, 1, 0]
+
+    
     constructor() {
         // this.type = 'cube';
         // this.position = [0.0, 0.0, 0.0];
         // this.color = [1.0, 1.0, 1.0, 1.0];
-        this.eye = new Vector3([0, 0, 3]);      // starting point for where 3D space is viewed
-        this.at = new Vector3([0, 0, -100]);    // look at point at which you are looking at from the eye point
+        this.eye = new Vector3([0, 0, -3]);      // starting point for where 3D space is viewed
+        this.at = new Vector3([0, 0, 100]);    // look at point at which you are looking at from the eye point
         this.up = new Vector3([0, 1, 0]);       // up direction in which the scene is viewed from. rotating head from eye point to match look at point
     }
+
 
     forward() {
         // ==  asgn doc way  ==

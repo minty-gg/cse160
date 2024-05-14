@@ -69,12 +69,15 @@ function setupWebGL() {
 
   // Get the rendering context for WebGL
   // gl = getWebGLContext(canvas); // adding a flag to this
-
+  
+  
   gl = canvas.getContext("webgl", { preserverDrawingBuffer: true});
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
   }
+
+  gl.enable(gl.DEPTH_TEST);
 }
 
 
@@ -233,6 +236,11 @@ function resetAll() {
   g_idleHead=0;
   g_idleFeet=0;
 
+  g_eye = [0, 0, 3];
+  g_at = [0, 0, -100];
+  g_up = [0, 1, 0];
+  g_camera = new Camera();
+
   renderAllShapes();
 }
 
@@ -375,6 +383,7 @@ function main() {
   // Clear <canvas>
   // gl.clear(gl.COLOR_BUFFER_BIT);
   //renderAllShapes();
+  // resetAll();
 	requestAnimationFrame(tick);
 }
 
@@ -482,30 +491,30 @@ function keydown(ev) {
   // W = 87, A = 65, S = 83, D = 68
   // dunno why but i had to reverse the left and right's +/- 
   if (ev.keyCode == 65) {   // right 
-    g_camera.eye.elements[0] -= 0.2;
+    g_camera.eye.elements[0] += 0.2;
   }
   else if (ev.keyCode == 68) {  // left
-    g_camera.eye.elements[0] += 0.2;
+    g_camera.eye.elements[0] -= 0.2;
   }
 
   else if (ev.keyCode == 83) {  // back
-    g_camera.eye.elements[2] += 0.2;
+    g_camera.eye.elements[2] -= 0.2;
   }
 
   else if (ev.keyCode == 87) {
-    //g_camera.eye.elements[2] -= 0.2;  // forward
+    //g_camera.eye.elements[2] += 0.2;  // forward
     g_camera.forward();
   }
 
   // else if keyCode is for Q: rotate left
   else if (ev.keyCode == 81) {
-    g_camera.at.elements[0] -= 2;
+    g_camera.at.elements[0] += 2;
     //g_camera.up.elements[2] -= 0.2;
   }
 
   // else if keyCode is for E: rotate right
   else if (ev.keyCode == 69) {
-    g_camera.at.elements[0] += 2;
+    g_camera.at.elements[0] -= 2;
     //g_camera.up.elements[2] += 0.2;
   }
   // x = 88, z = 90
@@ -546,22 +555,22 @@ function drawMap() {
   // wall.matrix.scale(0.3, 0.3, 0.3);
   
 
-  for (x = 0; x < 8; x++) {
-    for (y = 0; y < 8; y++) {
+  for (x = 0; x < 32; x++) {
+    for (y = 0; y < 32; y++) {
       //console.log(x,y);
-      if (g_map[x][y] ==  1) {
-      //if (x < 1 || x == 31 || y == 0 || y ==31) {
+      //if (g_map[x][y] ==  1) {
+      if (x < 1 || x == 31 || y == 0 || y ==31) {
         // the walls?? 
         
         //console.log("g[x][y] == 2")
         var wall = new Cube();
-        wall.textureNum = -2;
-        wall.color = [0.8, 1.0, 1.0, 1.0];
         
+        //wall.color = [0.8, 1.0, 1.0, 1.0];
+        wall.textureNum = 1;
         wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.5, 0.5, 0.5);
+        wall.matrix.scale(0.3, 1, 0.3);
         
-        wall.matrix.translate(x-8, 0, y-8);
+        wall.matrix.translate(x-16, 0, y-16);
         //wall.render();
         wall.renderfast();
       }
