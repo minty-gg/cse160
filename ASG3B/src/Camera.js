@@ -28,13 +28,6 @@ class Camera {
         f.mul(0.2);
         this.at = this.at.add(f);
         this.eye = this.eye.add(f);
-
-        
-        // ==  VID WAY:  ===
-        // var f = this.at.sub(this.eye);
-        // f = f.div(f.length());
-        // this.at = this.at.add(f);
-        // this.eye = this.eye.add(f);
     }
 
     back() {
@@ -46,12 +39,6 @@ class Camera {
         f.mul(0.2);
         this.at = this.at.add(f);
         this.eye = this.eye.add(f);
-        
-        // == VID WAY ===
-        // var f = this.eye.sub(this.at);
-        // f = f.divide(f.length());
-        // this.at = this.at.add(f);
-        // this.eye = this.eye.add(f);
     }
 
     left() {
@@ -69,17 +56,6 @@ class Camera {
         this.at = this.at.add(s);
         this.eye = this.eye.add(s);
 
-
-        // == VID WAY ==
-        // var f = this.at.sub(this.eye);
-        // f = f.divide(f.length());
-
-        // var s = f.cross(this.up);
-        // s = s.divide(s.length());
-
-        // this.at = this.at.add(s);
-        // this.eye = this.eye.add(s);
-
     }
 
     right() {
@@ -94,41 +70,29 @@ class Camera {
         s.mul(0.2);
         this.at = this.at.add(s);
         this.eye = this.eye.add(s);
-
-
-        // == VID WAY ===
-        // var f = this.at.sub(this.eye);
-        // f = f.div(f.length);
-
-        // var s = -f.cross(this.up);
-        // s = s.div(s.length);
-
-        // this.at = this.at.add(s);
-        // this.eye = this.eye.add(s);
     }
+
+    // SOURCE for Q and E pan rotations: https://people.ucsc.edu/~jbrowne2/asgn3/World.html 
 
     // Q
     panLeft(){
 
-        // let rotationMatrix = new Matrix4();
+        var atp = new Vector3();
+        atp.set(this.at.sub(this.eye));
 
-        // var f = new Vector3();
-        // f.set(this.at);
-        // f.sub(this.eye);
+        var r = Math.sqrt(atp.elements[0] * atp.elements[0]  +  atp.elements[2] * atp.elements[2]);
+        var theta = Math.atan2(atp.elements[2], atp.elements[0]);
 
-        // var alpha = 1;
-        // rotationMatrix.setRotate(alpha, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+        theta = theta - 5*(Math.PI/180);
+        atp.elements[0] = r * Math.cos(theta);
+        atp.elements[2] = r * Math.sin(theta);
 
-        // var f_prime = rotationMatrix.multiplyVector3(f);
-        // this.at = this.eye.add(f_prime);
-        
-        // console.log("f_prime: ", f_prime);
-        // console.log("this.eye: ", this.eye)
-        // console.log("this.at: ", this.at);
+        this.at.set(atp);
+        this.at.add(this.eye);
 
     }
 
-    // // E
+    // E
     panRight() {
         // let rotationMatrix = new Matrix4();
 
@@ -142,6 +106,29 @@ class Camera {
         // var f_prime = rotationMatrix.multiplyVector3(f);
         // this.at = this.eye.add(f_prime);
 
+        var atp = new Vector3();
+        atp.set(this.at.sub(this.eye));
+
+        var r = Math.sqrt(atp.elements[0] * atp.elements[0]  +  atp.elements[2] * atp.elements[2]);
+        var theta = Math.atan2(atp.elements[2], atp.elements[0]);
+
+        theta = theta + 5*(Math.PI/180);
+        atp.elements[0] = r * Math.cos(theta);
+        atp.elements[2] = r * Math.sin(theta);
+
+        this.at.set(atp);
+        this.at.add(this.eye);
+
+    }
+
+    // Z
+    panUp() {
+        g_camera.at.elements[1] += 5; 
+    }
+
+    // X
+    panDown() {
+        g_camera.at.elements[1] -= 5; 
     }
 }
 

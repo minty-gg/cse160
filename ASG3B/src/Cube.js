@@ -6,7 +6,8 @@ class Cube{
         //this.size = 5.0;
         //this.segments = 10;
         this.matrix = new Matrix4();
-        this.textureNum = -2;    
+        this.textureNum = -2;  
+        this.g_BlocksInWorld = [];  
         // -2 goes back to original cube colors, -1 sets to debugging colors, 0 sets to the specified texture
     }
 
@@ -132,6 +133,7 @@ class Cube{
         allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
         
         //drawTriangle3D(allverts);
+        this.g_BlocksInWorld = allverts; //g_BlocksInWorld.concat(allverts);
         drawTriangle3DUV(allverts, allUVs);
 
     }
@@ -149,12 +151,14 @@ class Cube{
 
         // Pass the matrix to u_ModelMatrix attribute
         gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+
         
         // front
         drawTriangle3D( [1.0, 0.0, 0.0,   0.0, 1.0, 0.0,    0.0, 0.0, 0.0]);
-        
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([1.0, 0.0, 0.0,   0.0, 1.0, 0.0,    0.0, 0.0, 0.0]);
         // back
         drawTriangle3D( [1.0, 0.0, 1.0,   0.0, 1.0, 1.0,    0.0, 0.0, 1.0] );
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([1.0, 0.0, 1.0,   0.0, 1.0, 1.0,    0.0, 0.0, 1.0]);
 
         // Pass the color of a point to u_FragColor uniform variable 
         // (make the bottom ones a diff shade, shows texture)
@@ -163,15 +167,21 @@ class Cube{
         // Left face of cube
         drawTriangle3D( [0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 0.0, 0.0] );
         drawTriangle3D( [0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 1.0, 1.0] );
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 0.0, 0.0]);
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 1.0, 1.0]);
 
         gl.uniform4f(u_FragColor, rgba[0] * 0.85, rgba[1] * 0.85, rgba[2] * 0.85, rgba[3]);
         // right slant
         drawTriangle3D( [1.0, 0.0, 0.0,    0.0, 1.0, 0.0,   1.0, 0.0, 1.0] );
         drawTriangle3D( [0.0, 1.0, 0.0,    0.0, 1.0, 1.0,   1.0, 0.0, 1.0] );
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([1.0, 0.0, 0.0,    0.0, 1.0, 0.0,   1.0, 0.0, 1.0]);
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([0.0, 1.0, 0.0,    0.0, 1.0, 1.0,   1.0, 0.0, 1.0]);
 
         gl.uniform4f(u_FragColor, rgba[0] * 0.8, rgba[1] * 0.8, rgba[2] * 0.8, rgba[3]);
         // Bottom of cube
         drawTriangle3D( [0.0, 0.0, 0.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
         drawTriangle3D( [1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([0.0, 0.0, 0.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0]);
+        this.g_BlocksInWorld = this.g_BlocksInWorld.concat([1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0]);
     }
 }

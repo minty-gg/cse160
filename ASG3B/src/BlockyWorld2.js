@@ -545,6 +545,11 @@ var g_shapesList = [];
 // var g_at = [0, 0, -100];
 // var g_up = [0, 1, 0];
 
+//let g_BlocksInWorld = [];
+//console.log("g_BlocksInWorld: ", g_BlocksInWorld);
+// add block
+// del block
+
 // to move around with WASD 
 function keydown(ev) {
   // W = 87, A = 65, S = 83, D = 68
@@ -570,25 +575,33 @@ function keydown(ev) {
 
   // else if keyCode is for Q: rotate left
   else if (ev.keyCode == 81) {
-    g_camera.at.elements[0] += 5;
-    //g_camera.up.elements[2] -= 0.2;
-    //g_camera.panLeft();
+    g_camera.panLeft();
   }
 
   // else if keyCode is for E: rotate right
   else if (ev.keyCode == 69) {
-    g_camera.at.elements[0] -= 5;
-    //g_camera.up.elements[2] += 0.2;
+    g_camera.panRight();
   }
   // x = 88, z = 90
   // for up and down angle
   else if (ev.keyCode == 88) {
-    g_camera.at.elements[1] -= 2;   // rotate down?
+    //g_camera.at.elements[1] -= 2;   // rotate down?
+    g_camera.panDown();
   }
   else if (ev.keyCode == 90) {
-    g_camera.at.elements[1] += 2;   // rotate up?
+    //g_camera.at.elements[1] += 2;   // rotate up?
+    g_camera.panUp();
   }
 
+  // add and delete blocks
+  // m = add block
+  else if (ev.keyCode == 77) {
+
+  }
+  // n = delete block
+  else if (ev.keyCode == 78) {
+
+  }
   
   renderAllShapes();
   console.log(ev.keyCode);
@@ -632,18 +645,8 @@ var g_map = [
 
 ];
 
-// vid 3.10 progres..
+
 function drawMap() {
-
-  // new one
-  // for (var x = 1; x < 5; x++) {
-  //   for (var z = 1; z < 5; z++) {
-
-  //     //if (g_map[i][j] == 1) {
-
-  //     //}
-  //   }
-  // }
 
   // old one
   //for (var i = 0; i < 2; i++) {
@@ -721,6 +724,8 @@ function renderAllShapes() {
   sky.textureNum = 0;
   sky.matrix.scale(50, 50, 50);
   sky.matrix.translate(-0.5, -0.5, -0.5);
+  //g_BlocksInWorld.push(sky.g_BlocksInWorld);
+  
   sky.renderfast();
 
   // == DRAW THE FLOOR ==
@@ -730,6 +735,7 @@ function renderAllShapes() {
   floor.matrix.translate(0, -0.75, 0.0);
   floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0.0, -0.5);
+  //g_BlocksInWorld.push(floor);
   floor.renderfast();
 
   // ========================
@@ -741,36 +747,42 @@ function renderAllShapes() {
   head.textureNum = -1;    // sets to texture num
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
+  //g_BlocksInWorld.push(head);
   head.renderfast();
   
   var nose = new Cube();
   nose.color = [184/255, 122/255, 45/255, 1];
   nose.matrix.setTranslate(-0.07, 0.1, -0.06);
   nose.matrix.scale(0.12, 0.08, 0.1);
+  //g_BlocksInWorld.push(nose);
   nose.renderfast();
 
   var eyeL = new Cube();
   eyeL.color = [0, 0, 0, 1];
   eyeL.matrix.setTranslate(-0.185, 0.2, -0.025);
   eyeL.matrix.scale(0.07, 0.07, 0.05);
+  //g_BlocksInWorld.push(eyeL);
   eyeL.renderfast();
 
   var eyeR = new Cube();
   eyeR.color = [0, 0, 0, 1];
   eyeR.matrix.setTranslate(0.089, 0.2, -0.025);
   eyeR.matrix.scale(0.07, 0.07, 0.05);
+  //g_BlocksInWorld.push(eyeR);
   eyeR.renderfast();
 
   var eyeDotL = new Cube();
   eyeDotL.color = [1, 1, 1, 1];
   eyeDotL.matrix.setTranslate(-0.15, 0.24, -0.02511);
   eyeDotL.matrix.scale(0.02, 0.02, 0.03);
+  //g_BlocksInWorld.push(eyeDotL);
   eyeDotL.renderfast();
 
   var eyeDotR = new Cube();
   eyeDotR.color = [1, 1, 1, 1];
   eyeDotR.matrix.setTranslate(0.099, 0.24, -0.02511);
   eyeDotR.matrix.scale(0.02, 0.02, 0.03);
+  //g_BlocksInWorld.push(eyeDotR);
   eyeDotR.renderfast();
 
   var earL = new Cube();
@@ -778,6 +790,7 @@ function renderAllShapes() {
   earL.matrix.setTranslate(-0.28, 0.42, -0.001);
   earL.matrix.rotate(-90, 0, 0, 1);
   earL.matrix.scale(0.14, 0.14, 0.26);
+  //g_BlocksInWorld.push(earL);
   earL.renderT();
 
   // base of right ear
@@ -786,6 +799,7 @@ function renderAllShapes() {
   earR.matrix.setTranslate(0.28, 0.42, -0.001);
   earR.matrix.rotate(180, 0, 0, 1);
   earR.matrix.scale(0.14, 0.14, 0.26);
+  //g_BlocksInWorld.push(earR);
   earR.renderT();
 
   // body
@@ -795,6 +809,7 @@ function renderAllShapes() {
   body.matrix.scale(0.4, 0.4, 0.25);
   
   body.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
+  //g_BlocksInWorld.push(body);
   body.renderfast();
 
 
@@ -805,6 +820,7 @@ function renderAllShapes() {
   bodyL.matrix.translate(-0.25, 0.03, -0.04);
   bodyL.matrix.rotate(-70, 0, 0, 1);
   bodyL.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyL);
   bodyL.renderfast();
 
   var bodyL2 = new Cube();
@@ -812,6 +828,7 @@ function renderAllShapes() {
   bodyL2.matrix.translate(-0.27, 0.03, -0.04);
   bodyL2.matrix.rotate(-90, 0, 0, 1);
   bodyL2.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyL2);
   bodyL2.renderfast();
 
   var bodyL3 = new Cube();
@@ -819,6 +836,7 @@ function renderAllShapes() {
   bodyL3.matrix.translate(-0.139, 0.039, -0.04);
   bodyL3.matrix.rotate(-105, 0, 0, 1);
   bodyL3.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyL3);
   bodyL3.renderfast();
 
   // right upper parts of his body
@@ -827,6 +845,7 @@ function renderAllShapes() {
   bodyR.matrix.translate(0.21, -0.067, -0.04);
   bodyR.matrix.rotate(70, 0, 0, 1);
   bodyR.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyR);
   bodyR.renderfast();
 
   var bodyR2 = new Cube();
@@ -834,6 +853,7 @@ function renderAllShapes() {
   bodyR2.matrix.translate(0.27, -0.07, -0.04);
   bodyR2.matrix.rotate(90, 0, 0, 1);
   bodyR2.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyR2);
   bodyR2.renderfast();
 
   var bodyR3 = new Cube();
@@ -841,6 +861,7 @@ function renderAllShapes() {
   bodyR3.matrix.translate(0.05, -0.087, -0.04);
   bodyR3.matrix.rotate(10, 0, 0, 1);
   bodyR3.matrix.scale(0.1, 0.1, 0.16);
+  //g_BlocksInWorld.push(bodyR3);
   bodyR3.render();
 
   // left arm and finger (connected)
@@ -853,6 +874,7 @@ function renderAllShapes() {
 
   var armLcoords = new Matrix4(armL.matrix);  // intermediate matrix
   armL.matrix.scale(0.1, 0.1, 0.07);
+  //g_BlocksInWorld.push(armL);
   armL.render();
 
   // left finger
@@ -865,6 +887,7 @@ function renderAllShapes() {
   //fingerL.matrix.rotate(0, 0, 0, 1);
   fingerL.matrix.scale(0.1, 0.1, 0.1);
   //fingerL.matrix.rotate(-g_leftArm, g_leftArm, g_leftArm, 1);
+  //g_BlocksInWorld.push(fingerL);
   fingerL.render();
 
 
@@ -878,6 +901,7 @@ function renderAllShapes() {
 
   var armRcoords = new Matrix4(armR.matrix);
   armR.matrix.scale(0.1, 0.1, 0.07);
+  //g_BlocksInWorld.push(armR);
   armR.render();
 
   var fingerR = new Cone();
@@ -887,6 +911,7 @@ function renderAllShapes() {
   //fingerR.matrix.rotate(90, 190, 140, 1);
   fingerR.matrix.rotate(g_rightHand, -g_rightHand, g_rightHand, 1);
   fingerR.matrix.scale(0.1, 0.1, 0.1);
+  //g_BlocksInWorld.push(fingerR);
   fingerR.render();
 
 
@@ -898,6 +923,7 @@ function renderAllShapes() {
   footL.matrix.rotate(-20, 0, 20, 1);
   footL.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
   footL.matrix.scale(0.2, 0.08, 0.15);
+  //g_BlocksInWorld.push(footL);
   footL.render();
 
   // uhh smth is wrong with the right foot i wanna push it back ;-;
@@ -908,6 +934,7 @@ function renderAllShapes() {
   footR.matrix.rotate(-30, 0, -20, 1);
   footR.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
   footR.matrix.scale(0.2, 0.08, 0.15);
+  //g_BlocksInWorld.push(footR);
   footR.render();
 
   var tail = new Cube();
@@ -916,6 +943,7 @@ function renderAllShapes() {
   tail.matrix.scale(0.2, 0.1, 0.3);
   tail.matrix.rotate(-10, 45, 0, 1);
   tail.matrix.rotate(-2.5*g_tailAngle, 5*g_tailAngle, 0, 1);  // animate tail to move
+  //g_BlocksInWorld.push(tail);
   tail.render();
 
   // extension for the tail to wiggle more less weirdly
@@ -923,6 +951,7 @@ function renderAllShapes() {
   butt.color = [57/255, 88/255, 132/255, 1];
   butt.matrix.translate(-0.105, -0.38, 0.255);
   butt.matrix.scale(0.21, 0.1, 0.1);
+  //g_BlocksInWorld.push(butt);
   butt.render();
 
   // eyebrows and mouth? for angry poke animation?
@@ -931,6 +960,7 @@ function renderAllShapes() {
   mouthL.matrix.setTranslate(-0.09, 0.025, -0.005);
   mouthL.matrix.rotate(30, 0, 0, 1);
   mouthL.matrix.scale(0.1, 0.01, 0.01);
+  //g_BlocksInWorld.push(mouthL);
   mouthL.render();
 
   var mouthR = new Cube();
@@ -938,6 +968,7 @@ function renderAllShapes() {
   mouthR.matrix.setTranslate(-0.008, 0.07, -0.005);
   mouthR.matrix.rotate(-30, 0, 0, 1);
   mouthR.matrix.scale(0.1, 0.01, 0.01);
+  //g_BlocksInWorld.push(mouthR);
   mouthR.render();
 
   // var browL = new Cube();
@@ -956,6 +987,7 @@ function renderAllShapes() {
   //shellTop.matrix.rotate(0, 0, 90, 1);
   shellTop.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
   shellTop.matrix.scale(0.2, 0.2, 0.1);
+  //g_BlocksInWorld.push(shellTop);
   shellTop.render();
 
 
@@ -975,5 +1007,7 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
 }
 
 // sources from HOF:
-// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html 
-// - 
+// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html  for adding/del blocks, mouse movements, 
+// - https://people.ucsc.edu/~jkohls/pa3/virtualWorld.html 
+// - llama one for renderfast() to work
+// - bee one for panleft and right
