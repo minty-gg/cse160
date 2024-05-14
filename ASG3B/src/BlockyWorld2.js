@@ -22,6 +22,7 @@ var FSHADER_SOURCE = `
   uniform vec4 u_FragColor; 
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
+  uniform sampler2D u_Sampler2;
   uniform int u_whichTexture;
   void main() {
 
@@ -40,6 +41,9 @@ var FSHADER_SOURCE = `
     else if (u_whichTexture == 1) {
       gl_FragColor = texture2D(u_Sampler1, v_UV);   // Use texture1
 
+    }
+    else if (u_whichTexture == 2) {
+      gl_FragColor = texture2D(u_Sampler2, v_UV);   // Use texture2
     }
 
     else {
@@ -61,7 +65,9 @@ let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_Sampler1;
+let u_Sampler2;
 let u_whichTexture;
+
 
 function setupWebGL() {
   // Retrieve <canvas> element
@@ -150,6 +156,11 @@ function connectVariablesToGLSL() {
   u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
   if (!u_Sampler1) {
     console.log('Failed to get the storage location of u_Sampler1');
+    return false;
+  }
+  u_Sampler2 = gl.getUniformLocation(gl.program, 'u_Sampler2');
+  if (!u_Sampler2) {
+    console.log('Failed to get the storage location of u_Sampler2');
     return false;
   }
 
@@ -277,80 +288,87 @@ function addActionsForHtmlUI() {
 function initTextures() {
   
   // Create the image object
-  var image = new Image();
-  if (!image) {
+  var image0 = new Image();
+  if (!image0) {
     console.log('Failed to create the image object');
     return false;
   }
 
   // Register the event handler to be called on loading an image
-  image.onload = function() { sendImageToTEXTURE0(image); } // function runs after loading complete
+  image0.onload = function() { sendImageToTEXTURES(image0, 0); } // function runs after loading complete
   // Tell the browser to load an image
-  image.src = 'sky_cloud.jpg';
+  image0.src = 'sky_cloud.jpg';
 
   // Add more texture loadings later (if needed)
+
+  var image1 = new Image();
+  if (!image1) {
+    console.log('Failed to create the image2 object');
+    return false;
+  }
+  image1.onload = function () { sendImageToTEXTURES(image1, 1); }
+  image1.src = 'grass_texture.jpeg';
 
   var image2 = new Image();
   if (!image2) {
     console.log('Failed to create the image2 object');
     return false;
   }
-  image2.onload = function () { sendImageToTEXTURE1(image2); }
-  image2.src = 'grass_texture.jpeg';
+  image2.onload = function () { sendImageToTEXTURES(image2, 2); }
+  image2.src = 'hedge.jpg';
 
   return true;
 }
 
-// TEXTURE0
-function sendImageToTEXTURE0(image) {
+function sendImageToTEXTURES(image, textureNum) {
   var texture = gl.createTexture();
   if (!texture) {
     console.log('Failed to create the texture object');
     return false;
   }
+  if (textureNum == 0) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
+    // Enable texture unit0
+    gl.activeTexture(gl.TEXTURE0);  // total of 8 texture units 
+    // Bind the texture object to the targeet
+    gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
-  // Enable texture unit0
-  gl.activeTexture(gl.TEXTURE0);  // total of 8 texture units 
-  // Bind the texture object to the targeet
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Set the texture parameters
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  // Set the texture parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // Set the texture image
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
 
-  // Set the texture image
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // Set the texture unit 0 to the sampler
+    gl.uniform1i(u_Sampler0, 0);
+    console.log('finished loadTexture0');
 
-  // Set the texture unit 0 to the sampler
-  gl.uniform1i(u_Sampler0, 0);
-  //console.log('finished loadTexture');
-}
-
-// TEXTURE1
-function sendImageToTEXTURE1(image) {
-  var texture = gl.createTexture();
-  if (!texture) {
-    console.log('Failed to create the texture object');
-    return false;
+  }
+  if (textureNum == 1) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
+    gl.activeTexture(gl.TEXTURE1);  // change for each texture
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler1, 1);  // change for each texture
+    console.log('finished loadTexture1');
+  }
+  if (textureNum == 2) {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
+    gl.activeTexture(gl.TEXTURE2);  // change for each texture
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    gl.uniform1i(u_Sampler2, 2);  // change for each texture
+    console.log('finished loadTexture2');
   }
 
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // Flip the image's y-xis
-  // Enable texture unit0
-  gl.activeTexture(gl.TEXTURE1);  // total of 8 texture units 
-  // Bind the texture object to the targeet
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+  // if (textureNum == 3) {
 
-  // Set the texture parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  // }
 
-  // Set the texture image
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-
-  // Set the texture unit 0 to the sampler
-  gl.uniform1i(u_Sampler1, 1);
-
-  //console.log('finished loadTexture');
 }
+
 
 
 // MAIN FUNCTION
@@ -533,49 +551,90 @@ function keydown(ev) {
 
 // map for canvas idk
 var g_map = [
-[1, 1, 1, 1, 1, 1, 1, 1],
-[1, 0, 0, 2, 2, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 1, 1, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 1, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 1],
-[1, 0, 0, 0, 0, 0, 0, 1],
+// [1, 1, 1, 1, 1, 1, 1, 1],
+// [1, 0, 0, 1, 1, 0, 0, 1],
+// [1, 0, 0, 0, 0, 0, 0, 1],
+// [1, 0, 0, 1, 1, 0, 0, 1],
+// [1, 0, 0, 0, 0, 0, 0, 1],
+// [1, 0, 0, 0, 1, 0, 0, 1],
+// [1, 0, 0, 0, 0, 0, 0, 1],
+// [1, 0, 0, 0, 0, 0, 0, 1],
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //2
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1], //6
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //7
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //8
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //9
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //10
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //11
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //12
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //13
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //14
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //15
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //16
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //17
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //18
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //19
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //20
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //21
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //22
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //23
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //24
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //25
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //26
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //27
+[1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //28
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //29
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //30
+[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //31
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //32
+
 ];
 
 // vid 3.10 progres..
 function drawMap() {
 
-  // create different size cubes for walls? with textures
-  // var wall = new Cube();
-  // wall.textureNum = -2;
-  // wall.color = [0.8, 1.0, 1.0, 1.0];
-  
-  // wall.matrix.translate(0, -0.75, 0);
-  // wall.matrix.scale(0.3, 0.3, 0.3);
-  
+  // new one
+  // for (var x = 1; x < 5; x++) {
+  //   for (var z = 1; z < 5; z++) {
 
-  for (x = 0; x < 32; x++) {
-    for (y = 0; y < 32; y++) {
-      //console.log(x,y);
-      //if (g_map[x][y] ==  1) {
-      if (x < 1 || x == 31 || y == 0 || y ==31) {
-        // the walls?? 
-        
-        //console.log("g[x][y] == 2")
-        var wall = new Cube();
-        
-        //wall.color = [0.8, 1.0, 1.0, 1.0];
-        wall.textureNum = 1;
-        wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.3, 1, 0.3);
-        
-        wall.matrix.translate(x-16, 0, y-16);
-        //wall.render();
-        wall.renderfast();
+  //     //if (g_map[i][j] == 1) {
+
+  //     //}
+  //   }
+  // }
+
+  // old one
+  //for (var i = 0; i < 2; i++) {
+    
+    for (x = 0; x < 32; x++) {
+      for (y = 0; y < 32; y++) {
+        //console.log(x,y);
+        if (g_map[x][y] ==  1) {
+        //if (x < 1 || x == 31 || y == 0 || y ==31) {
+          // the walls?? 
+          
+          //console.log("g[x][y] == 2")
+          var wall = new Cube();
+          
+          //wall.color = [0.8, 1.0, 1.0, 1.0];
+          wall.textureNum = 2;
+          wall.matrix.translate(0, -0.75, 0);
+          wall.matrix.scale(0.3, 1.2, 0.3);
+          wall.matrix.translate(x-16, 0, y-16);
+          //wall.render();
+          wall.renderfast();
+        }
       }
     }
-  }
+
+  //}
+
+
+
 }
 
 // Draw every shape that is supposed to be in the canvas

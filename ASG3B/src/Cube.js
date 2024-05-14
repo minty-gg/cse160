@@ -81,16 +81,16 @@ class Cube{
         //drawTriangle3DUV( [ 0.0, 0.0, 0.0,   0.0, 1.0, 0.0,  1.0, 1.0, 0.0 ], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );   // second one ( mostly blue)
         allverts = allverts.concat( [ 0.0, 0.0, 0.0,   1.0, 1.0, 0.0,  1.0, 0.0, 0.0 ] );
         allverts = allverts.concat( [ 0.0, 0.0, 0.0,   0.0, 1.0, 0.0,  1.0, 1.0, 0.0 ] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
 
         // Back face of cube
         //drawTriangle3DUV( [1.0, 0.0, 1.0,   0.0, 1.0, 1.0,   0.0, 0.0, 1.0], [1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
         //drawTriangle3DUV( [1.0, 0.0, 1.0,   0.0, 1.0, 1.0,   1.0, 1.0, 1.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [1.0, 0.0, 1.0,   0.0, 1.0, 1.0,   0.0, 0.0, 1.0] );
         allverts = allverts.concat( [1.0, 0.0, 1.0,   0.0, 1.0, 1.0,   1.0, 1.0, 1.0] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
 
         // Pass the color of a point to u_FragColor uniform variable
         //gl.uniform4f(u_FragColor, rgba[0] * 0.9, rgba[1] * 0.9, rgba[2] * 0.9, rgba[3]);
@@ -100,8 +100,8 @@ class Cube{
         //drawTriangle3DUV( [0.0, 1.0, 0.0,   1.0, 1.0, 1.0,   1.0, 1.0, 0.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [0.0, 1.0, 0.0,   0.0, 1.0, 1.0,   1.0, 1.0, 1.0] );
         allverts = allverts.concat( [0.0, 1.0, 0.0,   1.0, 1.0, 1.0,   1.0, 1.0, 0.0] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
 
         // Other sides of cube top, bottom, left, right, back <fill this in yourself>
 
@@ -110,16 +110,16 @@ class Cube{
         //drawTriangle3DUV( [0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 1.0, 1.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 0.0, 0.0] );
         allverts = allverts.concat( [0.0, 0.0, 1.0,   0.0, 1.0, 0.0,   0.0, 1.0, 1.0] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
 
         // Right face of cube
         //drawTriangle3DUV( [1.0, 0.0, 0.0,   1.0, 1.0, 0.0,   1.0, 0.0, 1.0], [1.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         //drawTriangle3DUV( [1.0, 1.0, 1.0,   1.0, 1.0, 0.0,   1.0, 0.0, 1.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [1.0, 0.0, 0.0,   1.0, 1.0, 0.0,   1.0, 0.0, 1.0] );
         allverts = allverts.concat( [1.0, 1.0, 1.0,   1.0, 1.0, 0.0,   1.0, 0.0, 1.0] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
 
         
         //gl.uniform4f(u_FragColor, rgba[0] * 0.8, rgba[1] * 0.8, rgba[2] * 0.8, rgba[3]);
@@ -128,8 +128,8 @@ class Cube{
         //drawTriangle3DUV( [1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0], [0.0, 0.0,  0.0, 1.0,  1.0, 1.0] );
         allverts = allverts.concat( [0.0, 0.0, 0.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
         allverts = allverts.concat( [1.0, 0.0, 1.0,   1.0, 0.0, 0.0,   0.0, 0.0, 1.0] );
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
-        allUVs = allUVs.concat([1.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
+        allUVs = allUVs.concat([0.0, 0.0,  0.0, 1.0,  1.0, 1.0]);
         
         //drawTriangle3D(allverts);
         drawTriangle3DUV(allverts, allUVs);
