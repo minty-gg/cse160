@@ -219,6 +219,9 @@ let g_idleBody=0; // make body bob forward and backward
 let g_idleHead=0; // make the head bob a bit side to side and forward/back?
 let g_idleFeet=0;
 
+// initilize camera
+var g_camera = new Camera();
+
 
 // function to reset all variables back to their default values
 function resetAll() {
@@ -263,6 +266,7 @@ function addActionsForHtmlUI() {
 	// Button Events
   document.getElementById('reset').onclick = function() {resetAll(); };
   document.getElementById('idle').onclick = function() { g_idleAnimation = true; };
+  document.getElementById('giveup').onclick = function() { g_camera.eye = new Vector3([0, 0, -1.5]); g_camera.at = new Vector3([0, 0, 100]); g_camera.up = new Vector3([0, 1, 0]); };
 	document.getElementById('animationWaveLOnButton').onclick = function() {g_waveLAnimation = true;};
 	document.getElementById('animationWaveLOffButton').onclick = function() {g_waveLAnimation = false;};
 	document.getElementById('animationWaveROnButton').onclick = function() {g_waveRAnimation = true;};
@@ -297,7 +301,7 @@ function initTextures() {
   // Register the event handler to be called on loading an image
   image0.onload = function() { sendImageToTEXTURES(image0, 0); } // function runs after loading complete
   // Tell the browser to load an image
-  image0.src = 'sky_cloud.jpg';
+  image0.src = 'textures/sky_cloud.jpg';
 
   // Add more texture loadings later (if needed)
 
@@ -307,7 +311,7 @@ function initTextures() {
     return false;
   }
   image1.onload = function () { sendImageToTEXTURES(image1, 1); }
-  image1.src = 'grass_texture.jpeg';
+  image1.src = 'textures/grass_texture.jpeg';
 
   var image2 = new Image();
   if (!image2) {
@@ -315,7 +319,7 @@ function initTextures() {
     return false;
   }
   image2.onload = function () { sendImageToTEXTURES(image2, 2); }
-  image2.src = 'hedge.jpg';
+  image2.src = 'textures/hedge.jpg';
 
   return true;
 }
@@ -390,6 +394,44 @@ function main() {
   // // canvas.onmousemove = click; // doesn't work properly
   //canvas.onmousemove  = function(ev) { if(ev.buttons == 1) { click(ev) } }; // ev.button is set to 1 if button is held down
   
+
+  // source from Copilot: implementing camera movement with mouse
+  var mouseX = null;
+  var mouseY = null;
+  //var mouseZ = null;
+  var mouseDown = false;
+
+  canvas.onmousedown = function(ev) {
+    mouseDown = true;
+    mouseX = ev.clientX;
+    mouseY = ev.clientY;
+    //mouseZ = ev.clientZ;
+  };
+
+  canvas.onmouseup = function(ev) {
+    mouseDown = false;
+  };
+
+  canvas.onmousemove = function(ev) {
+    if (mouseDown) {
+      // updated values of xyz
+      var newX = ev.clientX;
+      var newY = ev.clientY;
+      //var newZ = ev.clientZ;
+
+      g_camera.at.elements[0] += (newX - mouseX) * 0.5;
+      g_camera.at.elements[1] += (newY - mouseY) * 0.5;
+      //g_camera.at.elements[2] += (newZ - mouseZ) * 0.5;
+
+      mouseX = newX;
+      mouseY = newY;
+      //mouseZ = newZ;
+
+      renderAllShapes();
+    }
+  };
+
+
   document.onkeydown = keydown;
 
   initTextures();
@@ -464,45 +506,44 @@ var g_shapesList = [];
 // lines 287 - 312 to understand how to implement the click and rotation
 // Global angles
 
-function click(ev) {
+// function click(ev) {
 
-  // Extract the event click and return it in WebGL coordinates
-  let coordinates = convertCoordinatesEventToGL(ev);
-  g_globalX = g_globalX - coordinates[0]*360; // used to be minus for both
-  g_globalY = g_globalY - coordinates[1]*360;
+//   // Extract the event click and return it in WebGL coordinates
+//   let coordinates = convertCoordinatesEventToGL(ev);
+//   g_globalX = g_globalX - coordinates[0]*360; // used to be minus for both
+//   g_globalY = g_globalY - coordinates[1]*360;
 
-  renderAllShapes();
-}
+//   renderAllShapes();
+// }
 
 //SOURCE: I referenced code from "The Prince -Jeffrey Gu" to get the mouse click to rotate my drawing
 // https://people.ucsc.edu/~jrgu/asg2/blockyAnimal/BlockyAnimal.html
 
 // function to keep track of the origin of where the user clicked on the canvas
-function originCoords(ev) {
-    var x = ev.clientX;
-    var y = ev.clientY;
-    g_origin = [x, y];
-}
-// Extract the event click and return it in WebGL coordinates
-function convertCoordinatesEventToGL(ev) {
+// function originCoords(ev) {
+//     var x = ev.clientX;
+//     var y = ev.clientY;
+//     g_origin = [x, y];
+// }
+// // Extract the event click and return it in WebGL coordinates
+// function convertCoordinatesEventToGL(ev) {
   
-  var x = ev.clientX; // x coordinate of a mouse pointer
-  var y = ev.clientY; // y coordinate of a mouse pointer
+//   var x = ev.clientX; // x coordinate of a mouse pointer
+//   var y = ev.clientY; // y coordinate of a mouse pointer
   
-  let temp = [x,y];
-  x = (x - g_origin[0])/400;
-  y = (y - g_origin[1])/400;
-  g_origin = temp;
+//   let temp = [x,y];
+//   x = (x - g_origin[0])/400;
+//   y = (y - g_origin[1])/400;
+//   g_origin = temp;
 
-  return([x,y]);
-}
+//   return([x,y]);
+// }
 
 
 // variables to control where our camera will look at
-var g_eye = [0, 0, 3];
-var g_at = [0, 0, -100];
-var g_up = [0, 1, 0];
-var g_camera = new Camera();
+// var g_eye = [0, 0, 3];
+// var g_at = [0, 0, -100];
+// var g_up = [0, 1, 0];
 
 // to move around with WASD 
 function keydown(ev) {
@@ -526,13 +567,13 @@ function keydown(ev) {
 
   // else if keyCode is for Q: rotate left
   else if (ev.keyCode == 81) {
-    g_camera.at.elements[0] += 2;
+    g_camera.at.elements[0] += 5;
     //g_camera.up.elements[2] -= 0.2;
   }
 
   // else if keyCode is for E: rotate right
   else if (ev.keyCode == 69) {
-    g_camera.at.elements[0] -= 2;
+    g_camera.at.elements[0] -= 5;
     //g_camera.up.elements[2] += 0.2;
   }
   // x = 88, z = 90
@@ -551,42 +592,35 @@ function keydown(ev) {
 
 // map for canvas idk
 var g_map = [
-// [1, 1, 1, 1, 1, 1, 1, 1],
-// [1, 0, 0, 1, 1, 0, 0, 1],
-// [1, 0, 0, 0, 0, 0, 0, 1],
-// [1, 0, 0, 1, 1, 0, 0, 1],
-// [1, 0, 0, 0, 0, 0, 0, 1],
-// [1, 0, 0, 0, 1, 0, 0, 1],
-// [1, 0, 0, 0, 0, 0, 0, 1],
-// [1, 0, 0, 0, 0, 0, 0, 1],
+
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //2
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //3
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //4
-[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //5
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1], //6
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //7
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //8
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //9
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //10
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //11
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //12
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //13
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //14
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //15
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //16
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //17
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //18
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //19
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //20
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //21
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //22
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //23
-[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //24
-[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //25
-[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //26
-[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //27
-[1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //28
+[1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], //5
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //6
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //7
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //8
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1], //9
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //10
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //11
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //12
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1], //13
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //14
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //15
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //16
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //17
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //18
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //19
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1], //20
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1], //21
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //22
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //23
+[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //24
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //25
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //26
+[1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1], //27
+[1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], //28
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //29
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //30
 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], //31
@@ -611,6 +645,7 @@ function drawMap() {
   //for (var i = 0; i < 2; i++) {
     
     for (x = 0; x < 32; x++) {
+      
       for (y = 0; y < 32; y++) {
         //console.log(x,y);
         if (g_map[x][y] ==  1) {
@@ -618,8 +653,8 @@ function drawMap() {
           // the walls?? 
           
           //console.log("g[x][y] == 2")
-          var wall = new Cube();
           
+          var wall = new Cube();
           //wall.color = [0.8, 1.0, 1.0, 1.0];
           wall.textureNum = 2;
           wall.matrix.translate(0, -0.75, 0);
