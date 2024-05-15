@@ -1,3 +1,11 @@
+
+// Sources/inspo from HOF:
+// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html : for adding/del blocks, mouse movements, 
+// - https://people.ucsc.edu/~jkohls/pa3/virtualWorld.html : this one was really cool,
+// - https://people.ucsc.edu/~ntee/lab3/asg3.html : for renderfast() to work,
+// - https://people.ucsc.edu/~jbrowne2/asgn3/World.html : for panleft() and panright()
+
+
 // ColoredPoints.js (c) 2012 matsuda
 // Vertex shader program
 var VSHADER_SOURCE =`
@@ -367,10 +375,6 @@ function sendImageToTEXTURES(image, textureNum) {
     console.log('finished loadTexture2');
   }
 
-  // if (textureNum == 3) {
-
-  // }
-
 }
 
 
@@ -387,15 +391,8 @@ function main() {
   // Set up actions for the HTML UI elements
   addActionsForHtmlUI();
 
-  // Register function (event handler) to be called on a mouse press
-  // assign an Event function to this variable and define it
-  
-  //canvas.onmousedown = originCoords;  // function(ev) {origin(ev)} // function(ev){ click(ev) };
-  // // canvas.onmousemove = click; // doesn't work properly
-  //canvas.onmousemove  = function(ev) { if(ev.buttons == 1) { click(ev) } }; // ev.button is set to 1 if button is held down
-  
 
-  // source from Copilot: implementing camera movement with mouse
+  // SOURCE from Copilot: implementing camera movement with mouse
   var mouseX = null;
   var mouseY = null;
   //var mouseZ = null;
@@ -431,7 +428,6 @@ function main() {
     }
   };
 
-
   document.onkeydown = keydown;
 
   initTextures();
@@ -439,11 +435,6 @@ function main() {
   // Specify the color for clearing <canvas>
   // canvas backgorund color is black
   gl.clearColor(90/255, 90/255, 90/255, 1.0);
-
-  // Clear <canvas>
-  // gl.clear(gl.COLOR_BUFFER_BIT);
-  //renderAllShapes();
-  // resetAll();
 	requestAnimationFrame(tick);
 }
 
@@ -501,45 +492,6 @@ function updateAnimationAngles() {
 // a list of shapes that stores a list of points 
 var g_shapesList = [];
 
-// SOURCE: I referenced code from "The Prince -Jeffrey Gu" to get the mouse click to rotate my drawing
-// https://people.ucsc.edu/~jrgu/asg2/blockyAnimal/BlockyAnimal.html
-// lines 287 - 312 to understand how to implement the click and rotation
-// Global angles
-
-// function click(ev) {
-
-//   // Extract the event click and return it in WebGL coordinates
-//   let coordinates = convertCoordinatesEventToGL(ev);
-//   g_globalX = g_globalX - coordinates[0]*360; // used to be minus for both
-//   g_globalY = g_globalY - coordinates[1]*360;
-
-//   renderAllShapes();
-// }
-
-//SOURCE: I referenced code from "The Prince -Jeffrey Gu" to get the mouse click to rotate my drawing
-// https://people.ucsc.edu/~jrgu/asg2/blockyAnimal/BlockyAnimal.html
-
-// function to keep track of the origin of where the user clicked on the canvas
-// function originCoords(ev) {
-//     var x = ev.clientX;
-//     var y = ev.clientY;
-//     g_origin = [x, y];
-// }
-// // Extract the event click and return it in WebGL coordinates
-// function convertCoordinatesEventToGL(ev) {
-  
-//   var x = ev.clientX; // x coordinate of a mouse pointer
-//   var y = ev.clientY; // y coordinate of a mouse pointer
-  
-//   let temp = [x,y];
-//   x = (x - g_origin[0])/400;
-//   y = (y - g_origin[1])/400;
-//   g_origin = temp;
-
-//   return([x,y]);
-// }
-
-
 // variables to control where our camera will look at
 // var g_eye = [0, 0, 3];
 // var g_at = [0, 0, -100];
@@ -593,6 +545,17 @@ function keydown(ev) {
     g_camera.panUp();
   }
 
+  // move up and down
+  // up arrow = 38
+  // down arrow = 40
+  else if (ev.keyCode == 38) {
+    g_camera.eye.elements[1] += 0.2;
+  }
+  else if (ev.keyCode == 40) {
+    g_camera.eye.elements[1] -= 0.2;
+  }
+
+
   // add and delete blocks
   // m = add block
   else if (ev.keyCode == 77) {
@@ -607,7 +570,7 @@ function keydown(ev) {
   console.log(ev.keyCode);
 }
 
-// map for canvas idk
+// map for canvas
 var g_map = [
 
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
@@ -647,20 +610,12 @@ var g_map = [
 
 
 function drawMap() {
-
   // old one
-  //for (var i = 0; i < 2; i++) {
-    
     for (x = 0; x < 32; x++) {
-      
       for (y = 0; y < 32; y++) {
         //console.log(x,y);
         if (g_map[x][y] ==  1) {
-        //if (x < 1 || x == 31 || y == 0 || y ==31) {
-          // the walls?? 
-          
-          //console.log("g[x][y] == 2")
-          
+        //if (x < 1 || x == 31 || y == 0 || y ==31) { 
           var wall = new Cube();
           //wall.color = [0.8, 1.0, 1.0, 1.0];
           wall.textureNum = 2;
@@ -672,11 +627,6 @@ function drawMap() {
         }
       }
     }
-
-  //}
-
-
-
 }
 
 // Draw every shape that is supposed to be in the canvas
@@ -732,7 +682,7 @@ function renderAllShapes() {
   var floor = new Cube();
   floor.color = [1.0, 0.0, 0.0, 1.0];
   floor.textureNum = 1;
-  floor.matrix.translate(0, -0.75, 0.0);
+  floor.matrix.translate(0, -0.753, 0.0);
   floor.matrix.scale(10, 0, 10);
   floor.matrix.translate(-0.5, 0.0, -0.5);
   //g_BlocksInWorld.push(floor);
@@ -1005,9 +955,3 @@ function sendTextToHTML(text, htmlID) {   // we take the text and its htmlID
   }
   htmlElm.innerHTML = text; // send inner html to whatver the text was
 }
-
-// sources from HOF:
-// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html  for adding/del blocks, mouse movements, 
-// - https://people.ucsc.edu/~jkohls/pa3/virtualWorld.html 
-// - llama one for renderfast() to work
-// - bee one for panleft and right
