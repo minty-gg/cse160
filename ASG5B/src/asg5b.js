@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OBJLoader } from '../lib/OBJLoader.js';
 import { MTLLoader } from '../lib/MTLLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 //import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 //const fishURL = new URL('./Fish.glb', import.meta.url);
@@ -9,16 +10,26 @@ import { MTLLoader } from '../lib/MTLLoader.js';
 function main() {
 
 	const canvas = document.querySelector( '#c' );
-	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+	//const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+	const renderer = new THREE.WebGLRenderer( {
+		canvas, 
+		antialias: true,
+		alpha: true,
+	});
 
 	const fov = 75;
 	const aspect = 1.5; // the canvas default: width/height = 300/150 = 2
-	const near = 1;
-	const far = 15;
+	const near = 0.1;
+	const far = 100;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 10;
-	camera.position.y = 0;
-	camera.position.x = 0;
+	camera.position.set(0, 10, 20);
+	// camera.position.z = 10;
+	// camera.position.y = 0;
+	// camera.position.x = -2;
+
+	const controls = new OrbitControls( camera, canvas );
+	controls.target.set( 0, 5, 0 );
+	controls.update();
 
 	// camera persective, need to import gui
 
@@ -44,11 +55,21 @@ function main() {
     const sphere = new THREE.Mesh( geoSphere, materialSphere ); 
     scene.add( sphere );
 
-	// make shapeGeometry for heart
+	
+
+	// extrudeSettings from COPILOT!! 
+	const extrudeSettings = {
+		steps: 2,
+		depth: 0.2,
+		bevelEnabled: true,
+		bevelThickness: 1.0,
+		bevelSize: 0.02,
+		bevelSegments: 2
+	};
+
+	// make shapeGeometry for HEART
 	const x = 0, y = 0;
-
 	const heartShape = new THREE.Shape();
-
 	
 	heartShape.moveTo( x + 5, y + 5 );
 	heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
@@ -58,16 +79,24 @@ function main() {
 	heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
 	heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
 
-	const heart = new THREE.ShapeGeometry( heartShape );
+	const heart = new THREE.ExtrudeGeometry(heartShape, extrudeSettings); // line from Copilot for extrude shape to render!
+	//new THREE.ShapeGeometry( heartShape );
 	heart.scale(0.2, 0.2, 0.2);
-	//heart.rotateX(1);
-	//heart.rotateY();
 	heart.rotateZ(-3);	//10.75
-	//heart.translate(3, 3, -10);
 	heart.translate(3, 3, 0);
 	const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 	const mesh = new THREE.Mesh(heart, material ) ;
 	scene.add( mesh );
+
+	// PLANE GEOMETRY
+	const geometryP = new THREE.PlaneGeometry( 20, 15 );
+	const materialP = new THREE.MeshBasicMaterial( {color: 0x395884, side: THREE.DoubleSide} );
+	const plane = new THREE.Mesh( geometryP, materialP );
+	geometryP.rotateX(90);
+	geometryP.translate(0, -5, -3);
+	// scene.add( plane );
+
+	
 	// cubes.push(mesh);
 
 
@@ -128,6 +157,21 @@ function main() {
 		makeInstance( geometry, 0xaa8844, 6),
        // makeInstance( geoSphere, 0xffff00, 1),
 	];
+
+
+	// background texture loader
+	{
+		const loaderBG = new THREE.TextureLoader();
+		const textureBG = loaderBG.load(
+			'turquoise.jpg',
+			() => {
+
+				textureBG.mapping = THREE.EquirectangularReflectionMapping;
+				textureBG.colorSpace = THREE.SRGBColorSpace;
+				scene.background = textureBG;
+
+			} );
+	}
 
 	// osha cube/sphere
 	const loader = new THREE.TextureLoader();
