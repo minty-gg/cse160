@@ -3,6 +3,7 @@ import { OBJLoader } from '../lib/OBJLoader.js';
 import { MTLLoader } from '../lib/MTLLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
 //import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 //const fishURL = new URL('./Fish.glb', import.meta.url);
@@ -19,21 +20,25 @@ function main() {
 		alpha: true,
 	});
 
+	// Source: Alison Sun! https://alisun4.github.io/CSE160-asg05/ 
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setPixelRatio(window.devicePixelRatio);
+
 	const fov = 75;
 	const aspect = canvas.width/canvas.height; // the canvas default: width/height = 300/150 = 2
 	const near = 0.1;
 	const far = 150;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set(-3, 10, 50);
-	// camera.position.z = 10;
-	// camera.position.y = 0;
-	// camera.position.x = -2;
+	//camera.position.set(-3, 10, 50);
+	camera.position.z = 50;
+	camera.position.y = 10;
+	camera.position.x = -3;
 
 	const scene = new THREE.Scene();
 
 	// orbit controls
 	const controls = new OrbitControls( camera, canvas );
-	controls.target.set( 0, 0, 0 );
+	controls.target.set( 0, 0, 0);
 	controls.update();
 
 	// camera persective, need to import gui
@@ -87,20 +92,28 @@ function main() {
 		scene.add(hLight);
 	}
 
-	
-    // MAKE A SPHERE?
-    // //const sphereScene = new THREE.Scene();
-    // const geoSphere = new THREE.SphereGeometry( 0.5, 32,  16, 0, Math.PI *3, 0, Math.PI); 
-    // geoSphere.translate(5, 4, 1);
-	// // geoSphere.translate(5, 4, -10);
-    // const materialSphere = new THREE.MeshBasicMaterial( { color: 0x8844aa } ); 
-    // const sphere = new THREE.Mesh( geoSphere, materialSphere ); 
-    //scene.add( sphere );
 
 	// load 3d object here //
 	//     ........		   //
 	/////////////////////////
 
+
+	// TORUS KNOT SHAPE
+
+	function makeTorusKnot(c, x, y, z, s) {
+		const geometry = new THREE.TorusKnotGeometry(10/s, 3/s, 100/3*s, 16/s ); //10, 3, 100, 16 
+		const material = new THREE.MeshPhongMaterial( { color: c } ); 	//0xffff00
+		const torusKnot = new THREE.Mesh( geometry, material ); scene.add( torusKnot );
+		//cubes.push(torusKnot);
+		torusKnot.position.x = x;
+		torusKnot.position.y = y;
+		torusKnot.position.z = z;
+
+
+		return torusKnot;
+	}
+	
+	// ==========
 
 
 	// extrudeSettings from COPILOT!!  --> to make heart have depth (originally a 2d shape)
@@ -140,9 +153,13 @@ function main() {
 	}
 	// ===================================
 	// heart scene add calls:
-	makeHeart(0xff0000, 0, 3, 0, 0.3, -3); 	  // center heart
-	makeHeart(0xff0000, 18, 20, -8, 0.1, -3); // right top small heart
-	makeHeart(0xff0000, -18, 20, -8, 0.1, -3);
+	makeHeart(0xff0000, 0, 6, -40, 1, -3); 	  // center big heart
+	makeHeart(0xff0000, 18, 25, -8, 0.2, -3); // right top small heart
+	makeHeart(0xff0000, -18, 20, -8, 0.2, -3); // left top small 
+
+	makeHeart(0xff0000, -22, -20, -8, 0.2, -3); // left bottom small
+	makeHeart(0xff0000, 18, -28, -5, 0.2, -3); // right bottom small
+
 	// ------------------------
 
 
@@ -166,10 +183,10 @@ function main() {
 		cube.position.z = z;
 
 		return cube;
-
 	}
 	// ===================================
  
+
 	// ===  MAKE A SPHERE FUNCTION:  =====
 	function makeSphere (color, x, y, z, s) {
 
@@ -211,12 +228,22 @@ function main() {
 		// makeInstance( geometry, 0x44aa88, 0 ), // greenish blue
         // makeInstance( geoSphere, 0xffff00, 1),
 
-		makeInstance(0x8844aa, 8, 14, 3, 2.5),		// purple
-		makeInstance(0xaa8844, 12, 0, -3, 1.5),		// yellow brown
+		//makeInstance(0x8844aa, 12, 14, 3, 2.5),		// purple
+		makeInstance(0xaa8844, 12, 0, -3, 1.5),		// yellow brown bottom right
+		makeInstance(0xaa8844, -25, 18, -5, 1.5),     //
+
 		makeSphere(0x395884, -9, 15, 0, 1),			// osha navy blue
-		
 		makeSphere(0x87C9C5, 3, 11, -2, 1),			// turquoise
+		makeSphere(0x98edac, -35, -15, -15, 1.5),	// some green bottom left
+		makeSphere(0x82b8e8, 25, -5, -10, 3),
+
+
 		makeCone(0xfffbb9, -20, 28, -5, 5, 5), 		// top left shell color cone
+		makeCone(0x395884, 20, -20, -4, 5, 5),
+
+		makeTorusKnot(0xbac0d4, -30, 10, 10, 5),
+		makeTorusKnot(0x3cb0bd, 40, 13, -25, 3),
+		makeTorusKnot(0x87C9C5, -10, -35, -5, 4),
 	];
 
 
@@ -257,13 +284,42 @@ function main() {
 	const material = new THREE.MeshBasicMaterial({
 		map: texture,
 	});
-	
 	//const osha = new THREE.Mesh(new THREE.SphereGeometry( 3, 25, 9 ), material);
 	const osha2 = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), material);
 	osha2.position.set(0, 25, -8);
 	
 	scene.add(osha2);
 	cubes.push(osha2);  // add to our list of cubes to rotate
+	});
+
+	// ANOTHER osha texture cube (there will never be enough)
+	const loader3 = new THREE.TextureLoader();
+	loader3.load('osha3.jpeg', (texture) => {
+	texture.colorSpace = THREE.SRGBColorSpace;
+	const material = new THREE.MeshBasicMaterial({
+		map: texture,
+	});
+	
+	const osha3 = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), material);
+	osha3.position.set(15, 12, 0);
+	
+	scene.add(osha3);
+	cubes.push(osha3);  // add to our list of cubes to rotate
+	});
+
+	// ok last one (maybe)
+	const loader4 = new THREE.TextureLoader();
+	loader4.load('osha4.png', (texture) => {
+	texture.colorSpace = THREE.SRGBColorSpace;
+	const material = new THREE.MeshBasicMaterial({
+		map: texture,
+	});
+	
+	const osha4 = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), material);
+	osha4.position.set(0, -15, 0);
+	
+	scene.add(osha4);
+	cubes.push(osha4);  // add to our list of cubes to rotate
 	});
 
 
