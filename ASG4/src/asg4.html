@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Blocky 3D World</title>
+
+  </head>
+
+  <body onload="main()">
+
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Sphere.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Point.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Cone.js"></script>
+    <script src="Cylinder.js"></script>
+    <script src="Camera.js"></script>
+    <script src="asg4.js"></script>
+
+    <div id="student-info" stlye="display: inline-block; vertical-aligh: top;" >  <!--  -->
+      
+      <p>Name: Tiffany Guan</p>
+      <p>Email: tijguan@ucsc.edu</p>
+      
+    
+    </div>
+
+
+    <div class="container" style = "display: inline-block;">
+      <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+
+      
+      </canvas>
+
+    </div>
+
+    <div id="controls" style="display: inline-block; padding-left: 20px; vertical-align: top;">  <!-- style="float: left; padding-left: 450px;" -->
+      <h2>Controls</h2>
+      <p><b>W</b> - Forward</p>
+      <p><b>A</b> - Left</p>
+      <p><b>S</b> - Backward</p>
+      <p><b>D</b> - Right</p>
+      <p><b>Q</b> - Pan Left</p>
+      <p><b>E</b> - Pan Right</p>
+      <p><b>Z</b> - Pan Up</p>
+      <p><b>X</b> - Pan Down</p>
+      <p><b>Up Arrow</b> - Move Up</p>
+      <p><b>Down Arrow</b> - Move Down</p>
+    </div>
+
+
+    <h3>Noooo we lost Oshawott D: Let's find him!!</h3>
+
+    <p id="numdot"></p>
+
+    <!-- For shitf click animation, it could be the math.tan thing; click on oshawott make him mad and lash out at u with his arm-->
+
+    <div class="3d-sliders-buttons">
+      
+      <button id="normalOn">Normal On</button>
+      <button id="normalOff">Normal Off</button>
+
+      <p>
+      <button id="idle">Idle Animation</button>
+      
+      <button id="giveup">Give up?</button>
+      <button id="reset">Reset/Try Again!</button>
+      </p>
+
+      <p>
+        Horizontal Angle <input type="range" min="0" max="360" value="10" class="slider" id="angleSlide">
+        Vertical Angle <input type="range" min="0" max="360" value="10" class="slider" id="verSlide">
+        Z-axis Angle <input type="range" min="0" max="360" value="10" class="slider" id="Z-axisSlide">
+      </p>
+
+      <p>
+        Light X <input type="range" min="-250" max="250" value="0" class="slider" id="lightSlideX">
+        Light Y <input type="range" min="-250" max="250" value="100" class="slider" id="lightSlideY">
+        Light Z <input type="range" min="-250" max="250" value="-200" class="slider" id="lightSlideZ">
+      </p>
+
+
+
+
+      <p>
+          
+        Left Arm   <input type="range" min="0" max="90" value="0" class="slider" id="leftArmSlide">
+        Right Arm  <input type="range" min="0" max="90" value="0" class="slider" id="rightArmSlide">
+        Left Hand <input type="range" min="0" max="20" value="0" class="slider" id="leftHSlide">
+        Right Hand <input type="range" min="0" max="20" value="0" class="slider" id="rightHSlide">
+         
+        </p>
+        
+        Right Wave:
+        <button type="button" id="animationWaveROnButton">ON</button>
+        <button type="button" id="animationWaveROffButton">OFF</button>
+        </p>
+        <p>
+        Left Wave:
+        <button type="button" id="animationWaveLOnButton">ON</button>
+        <button type="button" id="animationWaveLOffButton">OFF</button>
+        </p>
+
+        <p>
+        Tail:
+        <button type="button" id="animationTailOnButton">ON</button>
+        <button type="button" id="animationTailOffButton">OFF</button>
+        (Turn to the side to see this)
+        </p>
+
+
+        
+    </div>
+    
+
+  </body>
+</html>
