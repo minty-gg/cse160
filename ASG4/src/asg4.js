@@ -24,7 +24,6 @@ var VSHADER_SOURCE =`
     v_VertPos = u_ModelMatrix * a_Position;
 
   }`
-// passing a_UV (a JS var vector shader) into a varying var v_UV (var for fragment shader)
 
 // Fragment shader program
 var FSHADER_SOURCE = `
