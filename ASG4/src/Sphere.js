@@ -38,7 +38,8 @@ class Sphere{
                 
                 var p2 = [Math.sin(t+dd)*Math.cos(r), Math.sin(t+dd)*Math.sin(r), Math.cos(t+dd)];
                 var p3 = [Math.sin(t)*Math.cos(r+dd), Math.sin(t)*Math.sin(r+dd), Math.cos(t)];
-                var p4 = [Math.sin(t+dd)*Math.cos(r+dd), Math.sin(t+dd)*Math.sin(t+dd)*Math.sin(r+dd), Math.cos(t+dd)];
+                var p4 = [Math.sin(t+dd)*Math.cos(r+dd), Math.sin(t+dd)*Math.sin(r+dd), Math.cos(t+dd)];
+                
                 var uv1 = [t/Math.PI, r/(2*Math.PI)];
                 var uv2 = [(t+dd)/Math.PI, r/(2*Math.PI)];
                 var uv3 = [t/Math.PI, (r+dd)/(2*Math.PI)];

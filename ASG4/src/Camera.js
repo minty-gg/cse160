@@ -2,7 +2,7 @@ class Camera {
 
     constructor() {
         // starting position: at the entrance of the maze
-        this.eye = new Vector3([0, 0, 6]);      // starting point for where 3D space is viewed
+        this.eye = new Vector3([0, 0, 4]);      // starting point for where 3D space is viewed
         this.at = new Vector3([0, 0, 0]);    // look at point at which you are looking at from the eye point
         this.up = new Vector3([0, 1, 0]);       // up direction in which the scene is viewed from. rotating head from eye point to match look at point
         // oshawott's camera POV: 

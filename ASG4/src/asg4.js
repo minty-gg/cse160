@@ -1,10 +1,4 @@
-
-// Sources/inspo from HOF:
-// - https://people.ucsc.edu/~jwdicker/Asgn3/BlockyWorld.html : for adding/del blocks, mouse movements, 
-// - https://people.ucsc.edu/~jkohls/pa3/virtualWorld.html : this one was really cool,
-// - https://people.ucsc.edu/~ntee/lab3/asg3.html : for renderfast() to work,
-// - https://people.ucsc.edu/~jbrowne2/asgn3/World.html : for panleft() and panright()
-
+// continuing from asg2
 
 // ColoredPoints.js (c) 2012 matsuda
 // Vertex shader program
@@ -17,13 +11,16 @@ var VSHADER_SOURCE =`
   varying vec3 v_Normal;
   varying vec4 v_VertPos;
 	uniform mat4 u_ModelMatrix;
+  uniform mat4 u_NormalMatrix;
 	uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
   uniform mat4 u_ProjectionMatrix;
   void main() {
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
-    v_Normal = a_Normal;
+    //mat4 NormalMatrix = transpose(inverse(u_ModelMatrix));
+    //v_Normal = a_Normal;
+    v_Normal = normalize(vec3(u_NormalMatrix * vec4(a_Normal, 1)));
     v_VertPos = u_ModelMatrix * a_Position;
 
   }`
@@ -40,7 +37,9 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler2;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
-  uniform vec4 v_VertPos;
+  uniform vec3 u_cameraPos;
+  varying vec4 v_VertPos;
+  uniform bool u_lightOn;
   void main() {
 
     if (u_whichTexture == -3) {
@@ -72,15 +71,57 @@ var FSHADER_SOURCE = `
     }
 
 
-    vec3 lightVector = vec3(v_VertPos) - u_lightPos;
+    vec3 lightVector = u_lightPos - vec3(v_VertPos);
     float r = length(lightVector);
 
-    if (r < 1.0) {
-      gl_FragColor = vec4(1,0,0,1); // set to red
+    // === Red/Green Distance Visualization ===
+    // if (r < 1.0) {
+    //   gl_FragColor = vec4(1,0,0,1); // set to red
+    // }
+    // else if (r < 2.0) {
+    //   gl_FragColor = vec4(0,1,0,1); // set to green
+    // }
+
+    // === Light Falloff Visualization 1/r^2 ===
+    // gl_FragColor = vec4(vec3(gl_FragColor)/(r*r), 1);
+
+
+
+
+    // === N dot L ===
+    vec3 L = normalize(lightVector);
+    vec3 N = normalize(v_Normal);
+    float nDotL = max(dot(N,L), 0.0);
+    gl_FragColor = gl_FragColor * nDotL;
+    gl_FragColor.a = 1.0;
+
+
+    // REFLECTION
+    vec3 R = reflect(-L,N);
+
+    // eye
+    vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
+
+    // SPECULAR
+    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+
+
+    // DIFFUSE and AMBIENT
+    vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 ambient = vec3(gl_FragColor) * 0.3;
+
+    if (u_lightOn) {
+      if (u_whichTexture == 0) {
+        gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
+      }
+      else {
+        gl_FragColor = vec4(diffuse + ambient, 1.0);
+      }
     }
-    else if (r < 2.0) {
-      gl_FragColor = vec4(0,1,0,1); // set to green
-    }
+
+    
+
+    
 
   }`
 
@@ -93,6 +134,7 @@ let a_Normal;
 let u_FragColor; 
 let u_Size;
 let u_ModelMatrix;
+let u_NormalMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
@@ -101,6 +143,8 @@ let u_Sampler1;
 let u_Sampler2;
 let u_whichTexture;
 let u_lightPos;
+let u_cameraPos;
+let u_lightOn;
 
 
 function setupWebGL() {
@@ -165,10 +209,28 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_cameraPos = gl.getUniformLocation(gl.program, 'u_cameraPos');
+  if (!u_cameraPos) {
+    console.log('Failed to get the storage location of u_cameraPos');
+    return;
+  }
+
+  u_lightOn = gl.getUniformLocation(gl.program, 'u_lightOn');
+  if (!u_lightOn) {
+    console.log('Failed to get the storage location of u_lightOn');
+    return;
+  }
+
   // Get the storage location of u_ModelMatrix
   u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
   if (!u_ModelMatrix) {
-    console.log('Failed to get the storage location of u_ModelMatrx');
+    console.log('Failed to get the storage location of u_ModelMatrix');
+    return;
+  }
+
+  u_NormalMatrix = gl.getUniformLocation(gl.program, 'u_NormalMatrix');
+  if (!u_NormalMatrix) {
+    console.log('Failed to get the storage location of u_NormalMatrix');
     return;
   }
 
@@ -240,7 +302,7 @@ let g_globalX = 0;
 let g_globalY=0;
 let g_globalZ=0;
 let g_origin = [0, 0];
-//let g_globalAngle=0;
+let g_globalAngle=0;
 
 // arm/hand wave animation
 let g_waveLAngle=0;
@@ -270,7 +332,10 @@ var g_camera = new Camera();
 
 // normal on/off
 let g_normalOn = false;
-let g_lightPos = [0, 1, -2];
+let g_lightPos = [0, 1, -2];  // original
+//let g_lightPos = [0, 2, -1]; 
+//let g_lightPos = [2, -1, 1];
+let g_lightOn = true;
 
 
 // function to reset all variables back to their default values
@@ -305,7 +370,9 @@ function resetAll() {
   g_up = [0, 1, 0];
   g_camera = new Camera();
   g_normalOn = false;
-  g_lightPos = [0, 1, -2];
+  g_lightPos = [0, 1, -2]; 
+  g_globalAngle=0;
+  g_lightOn = true;
 
   renderAllShapes();
 }
@@ -317,7 +384,10 @@ function addActionsForHtmlUI() {
   
 	// Button Events
   document.getElementById('normalOn').onclick = function() {g_normalOn = true;}; 
-  document.getElementById('normalOff').onclick = function() {g_normalOn = false}; 
+  document.getElementById('normalOff').onclick = function() {g_normalOn = false};
+  document.getElementById('lightOn').onclick = function() {g_lightOn = true;}; 
+  document.getElementById('lightOff').onclick = function() {g_lightOn = false}; 
+
   document.getElementById('reset').onclick = function() {resetAll(); };
   document.getElementById('idle').onclick = function() { g_idleAnimation = true; };
   document.getElementById('giveup').onclick = function() { g_camera.eye = new Vector3([0, 0, -1.5]); g_camera.at = new Vector3([0, 0, 100]); g_camera.up = new Vector3([0, 1, 0]); };
@@ -332,13 +402,15 @@ function addActionsForHtmlUI() {
   document.getElementById('lightSlideX').addEventListener('mousemove', function(ev) {if(ev.buttons == 1) {g_lightPos[0] = this.value/100; renderAllShapes();}})
   document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) {if(ev.buttons == 1) {g_lightPos[1] = this.value/100; renderAllShapes();}})
   document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) {if(ev.buttons == 1) {g_lightPos[2] = this.value/100; renderAllShapes();}})
-  
+  canvas.onmousemove = function(ev) {if (ev.buttons == 1) {click(ev)}};
+
+
+
   // Size Slider Events
-  document.getElementById('angleSlide').addEventListener('input', function() { g_globalY = this.value; renderAllShapes(); });
+  // angle slide is horizontal camera angle
+  document.getElementById('angleSlide').addEventListener('input', function() { g_globalY = this.value; g_globalAngle = this.value; renderAllShapes(); });
   document.getElementById('verSlide').addEventListener('input', function() { g_globalX = this.value; renderAllShapes(); });
   document.getElementById('Z-axisSlide').addEventListener('input', function() { g_globalZ = this.value; renderAllShapes(); });
-
-  canvas.onmousemove = function(ev) {if (ev.buttons == 1) {cancelIdleCallback(ev)}};
 
 
   document.getElementById('leftArmSlide').addEventListener('input', function() { g_leftArm = this.value; renderAllShapes(); });
@@ -538,20 +610,18 @@ function updateAnimationAngles() {
     g_tailAngle = 10*Math.cos(g_seconds);
 
   }
+
+  // animate lighting
+  //if (g_lightOn) {
+  g_lightPos[0] = Math.cos(g_seconds);
+  //}
+  
+
 }
 
 // a list of shapes that stores a list of points 
 var g_shapesList = [];
 
-// variables to control where our camera will look at
-// var g_eye = [0, 0, 3];
-// var g_at = [0, 0, -100];
-// var g_up = [0, 1, 0];
-
-//let g_BlocksInWorld = [];
-//console.log("g_BlocksInWorld: ", g_BlocksInWorld);
-// add block
-// del block
 
 // to move around with WASD 
 function keydown(ev) {
@@ -689,7 +759,7 @@ function renderAllShapes() {
 
   // Pass the projection  matrix
   var projMat = new Matrix4();
-  projMat.setPerspective(50, 1*canvas.width/canvas.height, 1, 100); // (90 deg wide, aspect = width/height, near plane = 0.1, far plane = 100)
+  projMat.setPerspective(90, 1*canvas.width/canvas.height, .1, 100); // (90 deg wide, aspect = width/height, near plane = 0.1, far plane = 100)
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   // Pass the view matrix
@@ -705,7 +775,7 @@ function renderAllShapes() {
 
 
 	// Pass the matrix to u_ModelMatrix attribute
-  var globalRotMat = new Matrix4(); 
+  var globalRotMat = new Matrix4(); //.rotate(g_globalAngle, 0, 1, 0);
   globalRotMat.rotate(g_globalX,1,0,0); // x-axis
   globalRotMat.rotate(g_globalY,0,1,0); // y-axis
   globalRotMat.rotate(g_globalZ,0,0,1); // z-axis
@@ -717,19 +787,28 @@ function renderAllShapes() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	gl.clear(gl.COLOR_BUFFER_BIT );
 	//gl.enable(gl.DEPTH_TEST); // do not uncomment this causes z-fighting on the floor!!
-  
+
 
   // Pass the light position to GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
 
+  // Pass the camera position to GLSL
+  gl.uniform3f(u_cameraPos, g_camera.eye.x, g_camera.eye.y, g_camera.eye.z);
+
+  // Pass the light status
+  gl.uniform1i(u_lightOn, g_lightOn);
+
   // == DRAW CUBE AND SPHERE FOR LIGHTING ==
 
-  // DRAW THE LIGHT
+  // DRAW THE LIGHT w cube
   var light = new Cube();
   light.color = [2,2,0,1];
+  
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(0.1, 0.1, 0.1);
+  
+  light.matrix.scale(-0.1, -0.1, -0.1);
   light.matrix.translate(-0.5, -0.5, -0.5);
+  
   light.render();
 
   // SPHERE
@@ -737,10 +816,11 @@ function renderAllShapes() {
   if (g_normalOn) {
     sp.textureNum = -3;
   }
-  sp.matrix.translate(-1, 0, -1.5);
-  //sp.matrix.scale(0.5, 0.5, 0.5);
+  sp.matrix.translate(-1, -1.5, -1.5);
+  //sp.matrix.scale(0.4, 0.4, 0.4);
   sp.render();
 
+  // sp.normalMatrix.setInverseOf(sp.matrix).transpose(); // for normal matrix stuff
 
 
   // Copilot told me to consider drawing the sky first then the floor etc
@@ -752,10 +832,10 @@ function renderAllShapes() {
   }
   else {
     //sky.color = [1,1,1,1];
-    sky.textureNum = -2;
+    sky.textureNum = 0;
   }
   
-  sky.matrix.scale(12, 12, 12);   // to invert the normal colors, in this case do scale(-50, -50, -50)
+  sky.matrix.scale(-15, -15, -15);   // to invert the normal colors, in this case do scale(-50, -50, -50)
   sky.matrix.translate(-0.5, -0.5, -0.5);
   
   sky.render();
@@ -764,26 +844,15 @@ function renderAllShapes() {
   var floor = new Cube();
   floor.color = [1.0, 0.0, 0.0, 1.0];
   floor.textureNum = 1;
-  floor.matrix.translate(0, -0.753, 0.0);
+  floor.matrix.translate(0, -2.49, 0.0);
   floor.matrix.scale(10, 0, 10);
-  floor.matrix.translate(-0.5, -1, -0.5);
+  floor.matrix.translate(-0.5, 0, -0.5 );
   
   floor.render();
 
   // =====  DRAW MAP  ==========
-  drawMap();
-
-  // CUBE
-  var c = new Cube();
-  if (g_normalOn) {
-    c.textureNum = -3;
-  }
-  else {
-    c.color = [57/255, 88/255, 132/255, 1];
-  }
-  c.matrix.setTranslate(-1.5, -0.5, 0);
-  c.matrix.scale(0.5, 0.5, 0.5);
-  //c.render();
+  // drawMap();
+  
 
   
   
@@ -792,128 +861,176 @@ function renderAllShapes() {
 	// ======= MY BLOCKY ANIMAL: ==============
   var head = new Cube();
   head.color = [1, 1, 1, 1];
-  head.textureNum = -1;    // sets to texture num
+  // head.textureNum = -1;    // sets to texture num
+  if (g_normalOn) {
+    head.textureNum = -3;
+  }
   head.matrix.translate(-0.25, 0, 0);
   head.matrix.scale(0.5, 0.4, 0.25);
   
-  //head.render();
+  head.renderfast();
   
   var nose = new Cube();
   nose.color = [184/255, 122/255, 45/255, 1];
+  if (g_normalOn) {
+    nose.textureNum = -3;
+  }
   nose.matrix.setTranslate(-0.07, 0.1, -0.06);
   nose.matrix.scale(0.12, 0.08, 0.1);
   
-  //nose.render();
+  nose.renderfast();
 
   var eyeL = new Cube();
   eyeL.color = [0, 0, 0, 1];
+  if (g_normalOn) {
+    eyeL.textureNum = -3;
+  }
   eyeL.matrix.setTranslate(-0.185, 0.2, -0.025);
   eyeL.matrix.scale(0.07, 0.07, 0.05);
   
-  //eyeL.render();
+  eyeL.renderfast();
 
   var eyeR = new Cube();
   eyeR.color = [0, 0, 0, 1];
+  if (g_normalOn) {
+    eyeR.textureNum = -3;
+  }
   eyeR.matrix.setTranslate(0.089, 0.2, -0.025);
   eyeR.matrix.scale(0.07, 0.07, 0.05);
  
-  //eyeR.render();
+  eyeR.renderfast();
 
   var eyeDotL = new Cube();
   eyeDotL.color = [1, 1, 1, 1];
+  if (g_normalOn) {
+    eyeDotL.textureNum = -3;
+  }
   eyeDotL.matrix.setTranslate(-0.15, 0.24, -0.02511);
   eyeDotL.matrix.scale(0.02, 0.02, 0.03);
   
-  //eyeDotL.render();
+  eyeDotL.renderfast();
 
   var eyeDotR = new Cube();
   eyeDotR.color = [1, 1, 1, 1];
+  if (g_normalOn) {
+    eyeDotR.textureNum = -3;
+  }
   eyeDotR.matrix.setTranslate(0.099, 0.24, -0.02511);
   eyeDotR.matrix.scale(0.02, 0.02, 0.03);
   
-  //eyeDotR.render();
+  eyeDotR.renderfast();
 
   var earL = new Cube();
   earL.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    earL.textureNum = -3;
+  }
   earL.matrix.setTranslate(-0.28, 0.42, -0.001);
   earL.matrix.rotate(-90, 0, 0, 1);
   earL.matrix.scale(0.14, 0.14, 0.26);
   
-  //earL.renderT();
+  earL.renderT();
 
   // base of right ear
   var earR = new Cube();
   earR.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    earR.textureNum = -3;
+  }
   earR.matrix.setTranslate(0.28, 0.42, -0.001);
   earR.matrix.rotate(180, 0, 0, 1);
   earR.matrix.scale(0.14, 0.14, 0.26);
   
-  //earR.renderT();
+  earR.renderT();
 
   // body
   var body = new Cube();
   body.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    body.textureNum = -3;
+  }
   body.matrix.translate(-0.2, -0.4, -0.001);
   body.matrix.scale(0.4, 0.4, 0.25);
   
   body.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
   
-  //body.render();
+  body.renderfast();
 
 
   // these could be made into a cylinder
   // left upper parts of his body (the little bumps)
   var bodyL = new Cube();
   bodyL.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyL.textureNum = -3;
+  }
   bodyL.matrix.translate(-0.25, 0.03, -0.04);
   bodyL.matrix.rotate(-70, 0, 0, 1);
   bodyL.matrix.scale(0.1, 0.1, 0.16);
  
-  //bodyL.render();
+  bodyL.renderfast();
 
   var bodyL2 = new Cube();
   bodyL2.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyL2.textureNum = -3;
+  }
   bodyL2.matrix.translate(-0.27, 0.03, -0.04);
   bodyL2.matrix.rotate(-90, 0, 0, 1);
   bodyL2.matrix.scale(0.1, 0.1, 0.16);
   
-  //bodyL2.render();
+  bodyL2.renderfast();
 
   var bodyL3 = new Cube();
   bodyL3.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyL3.textureNum = -3;
+  }
   bodyL3.matrix.translate(-0.139, 0.039, -0.04);
   bodyL3.matrix.rotate(-105, 0, 0, 1);
   bodyL3.matrix.scale(0.1, 0.1, 0.16);
   
-  //bodyL3.render();
+  bodyL3.renderfast();
 
   // right upper parts of his body
   var bodyR = new Cube();
   bodyR.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyR.textureNum = -3;
+  }
   bodyR.matrix.translate(0.21, -0.067, -0.04);
   bodyR.matrix.rotate(70, 0, 0, 1);
   bodyR.matrix.scale(0.1, 0.1, 0.16);
   
-  //bodyR.render();
+  bodyR.renderfast();
 
   var bodyR2 = new Cube();
   bodyR2.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyR2.textureNum = -3;
+  }
   bodyR2.matrix.translate(0.27, -0.07, -0.04);
   bodyR2.matrix.rotate(90, 0, 0, 1);
   bodyR2.matrix.scale(0.1, 0.1, 0.16);
   
-  //bodyR2.render();
+  bodyR2.renderfast();
 
   var bodyR3 = new Cube();
   bodyR3.color = [135/255, 201/255, 197/255, 1];
+  if (g_normalOn) {
+    bodyR3.textureNum = -3;
+  }
   bodyR3.matrix.translate(0.05, -0.087, -0.04);
   bodyR3.matrix.rotate(10, 0, 0, 1);
   bodyR3.matrix.scale(0.1, 0.1, 0.16);
   
-  //bodyR3.render();
+  bodyR3.renderfast();
 
   // left arm and finger (connected)
   var armL = new Cylinder();
+  if (g_normalOn) {
+    armL.textureNum = -3;
+  }
   armL.matrix.setTranslate(-0.2, -0.05, 0.05);
   
   armL.matrix.rotate(90, 100, -30, 1);
@@ -923,11 +1040,14 @@ function renderAllShapes() {
   var armLcoords = new Matrix4(armL.matrix);  // intermediate matrix
   armL.matrix.scale(0.1, 0.1, 0.07);
   
-  //armL.render();
+  armL.render();
 
   // left finger
   var fingerL = new Cone();
   fingerL.color = [1, 1, 1, 1];
+  if (g_normalOn) {
+    fingerL.textureNum = -3;
+  }
   fingerL.matrix = armLcoords;
   fingerL.matrix.translate(0.0, 0.0, 0.135); // left right, back front, up down
   
@@ -936,12 +1056,14 @@ function renderAllShapes() {
   fingerL.matrix.scale(0.1, 0.1, 0.1);
   //fingerL.matrix.rotate(-g_leftArm, g_leftArm, g_leftArm, 1);
   
-  //fingerL.render();
+  fingerL.render();
 
 
   // right arm and finger (coonected)
   var armR = new Cylinder();
-
+  if (g_normalOn) {
+    armR.textureNum = -3;
+  }
   armR.matrix.setTranslate(0.2, -0.05, 0.05);
   armR.matrix.rotate(90, 100, 30, 1);
   armR.matrix.rotate(g_waveRAngle, 0, g_waveRAngle, 1);
@@ -950,74 +1072,95 @@ function renderAllShapes() {
   var armRcoords = new Matrix4(armR.matrix);
   armR.matrix.scale(0.1, 0.1, 0.07);
   
-  //armR.render();
+  armR.render();
 
   var fingerR = new Cone();
   fingerR.color = [1, 1, 1,1];
+  if (g_normalOn) {
+    fingerR.textureNum = -3;
+  }
   fingerR.matrix = armRcoords;
   fingerR.matrix.translate(0.0, 0.0, 0.135);
   //fingerR.matrix.rotate(90, 190, 140, 1);
   fingerR.matrix.rotate(g_rightHand, -g_rightHand, g_rightHand, 1);
   fingerR.matrix.scale(0.1, 0.1, 0.1);
   
-  //fingerR.render();
+  fingerR.render();
 
 
   // feet
   var footL = new Cube();
   footL.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    footL.textureNum = -3;
+  }
   footL.textureNum = -1;
   footL.matrix.setTranslate(-0.245, -0.45, -0.1);
   footL.matrix.rotate(-20, 0, 20, 1);
   footL.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
   footL.matrix.scale(0.2, 0.08, 0.15);
   
-  //footL.render();
+  footL.renderfast();
 
   // uhh smth is wrong with the right foot i wanna push it back ;-;
   var footR = new Cube();
   footR.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    footR.textureNum = -3;
+  }
   footR.textureNum = -1;
   footR.matrix.translate(0.07, -0.45, -0.05);
   footR.matrix.rotate(-30, 0, -20, 1);
   footR.matrix.rotate(1, -4*g_idleFeet, -4*g_idleFeet, 1);  // idle animation
   footR.matrix.scale(0.2, 0.08, 0.15);
   
-  //footR.render();
+  footR.renderfast();
 
   var tail = new Cube();
   tail.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    tail.textureNum = -3;
+  }
   tail.matrix.translate(-0.1, -0.38, 0.35);
   tail.matrix.scale(0.2, 0.1, 0.3);
   tail.matrix.rotate(-10, 45, 0, 1);
   tail.matrix.rotate(-2.5*g_tailAngle, 5*g_tailAngle, 0, 1);  // animate tail to move
   
-  //tail.render();
+  tail.renderfast();
 
   // extension for the tail to wiggle more less weirdly
   var butt = new Cube();
   butt.color = [57/255, 88/255, 132/255, 1];
+  if (g_normalOn) {
+    butt.textureNum = -3;
+  }
   butt.matrix.translate(-0.105, -0.38, 0.255);
   butt.matrix.scale(0.21, 0.1, 0.1);
   
-  //butt.render();
+  butt.renderfast();
 
   // eyebrows and mouth? for angry poke animation?
   var mouthL = new Cube();
   mouthL.color = [0, 0, 0, 1];
+  if (g_normalOn) {
+    mouthL.textureNum = -3;
+  }
   mouthL.matrix.setTranslate(-0.09, 0.025, -0.005);
   mouthL.matrix.rotate(30, 0, 0, 1);
   mouthL.matrix.scale(0.1, 0.01, 0.01);
   
-  //mouthL.render();
+  mouthL.renderfast();
 
   var mouthR = new Cube();
   mouthR.color = [0, 0, 0, 1];
+  if (g_normalOn) {
+    mouthR.textureNum = -3;
+  }
   mouthR.matrix.setTranslate(-0.008, 0.07, -0.005);
   mouthR.matrix.rotate(-30, 0, 0, 1);
   mouthR.matrix.scale(0.1, 0.01, 0.01);
   
-  //mouthR.render();
+  mouthR.renderfast();
 
   // var browL = new Cube();
   // var browR = new Cube();
@@ -1025,6 +1168,9 @@ function renderAllShapes() {
   // osha shell!
   var shellTop = new Cone();
   shellTop.color = [255/255, 251/255, 185/255, 1];
+  if (g_normalOn) {
+    shellTop.textureNum = -3;
+  }
 
   shellTop.matrix.setTranslate(0, -0.16, -0.002);
   //shellTop.matrix.rotate(-180, -180, -180, 1);
@@ -1036,7 +1182,7 @@ function renderAllShapes() {
   shellTop.matrix.rotate(0, 0, -2*g_idleBody, 1);  //idle animation
   shellTop.matrix.scale(0.2, 0.2, 0.1);
   
-  //shellTop.render();
+  shellTop.render();
 
 
 	// Check the time at the end of the function, and show on web page
