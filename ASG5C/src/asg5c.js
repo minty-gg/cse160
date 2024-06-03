@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 //import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'
 // import { OBJLoader } from '../lib/OBJLoader.js';
 // import { MTLLoader } from '../lib/MTLLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -35,10 +36,10 @@ function main() {
 	const near = 0.1;
 	const far = 150;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set(0, 10, 20);
-	// camera.position.z = 50;
-	// camera.position.y = 10;
-	// camera.position.x = -3;
+	//camera.position.set(0, 10, 20);
+	camera.position.z = 50;
+	camera.position.y = 10;
+	camera.position.x = -3;
 
 	const scene = new THREE.Scene();
 	
@@ -105,10 +106,10 @@ function main() {
 	//     ........		   //
 	/////////////////////////
 
-	{
+	{	// assets/oshawott/scene.gltf
 		//const url = './oshawott/scene.gltf';
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load('assets/oshawott/scene.gltf', (gltf) => {
+		gltfLoader.load('./assets/oshawott/scene.gltf', (gltf) => {
 			const model = gltf.scene;
 			scene.add(model);
 			console.log("added model");
