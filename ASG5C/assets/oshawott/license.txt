@@ -1,0 +1,11 @@
+Model Information:
+* title:	Oshawott
+* source:	https://sketchfab.com/3d-models/oshawott-155d8a2175ad4ca39b797b599041628a
+* author:	jsuliocesar012 (https://sketchfab.com/jsuliocesar012)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Oshawott" (https://sketchfab.com/3d-models/oshawott-155d8a2175ad4ca39b797b599041628a) by jsuliocesar012 (https://sketchfab.com/jsuliocesar012) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
