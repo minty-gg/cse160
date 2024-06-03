@@ -1,0 +1,11 @@
+Model Information:
+* title:	Pokémon RBY - PokéMart
+* source:	https://sketchfab.com/3d-models/pokemon-rby-pokemart-5622c3d1c7ef44d2ac0dab11ab1e216c
+* author:	Wesai (https://sketchfab.com/Wesai)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Pokémon RBY - PokéMart" (https://sketchfab.com/3d-models/pokemon-rby-pokemart-5622c3d1c7ef44d2ac0dab11ab1e216c) by Wesai (https://sketchfab.com/Wesai) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

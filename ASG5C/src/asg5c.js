@@ -1,45 +1,38 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-//import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'
-// import { OBJLoader } from '../lib/OBJLoader.js';
-// import { MTLLoader } from '../lib/MTLLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 
 
-
 // HOF source/inspo: https://people.ucsc.edu/~capar/cse160/asg5/world.html
-// loading obj with gltf source: https://blu-octopus.github.io/cse160/asgn5a/asgn5
+// loading obj with gltf source: Daphne Cheng! https://blu-octopus.github.io/cse160/asgn5a/asgn5
 
 function main() {
 
 	const canvas = document.querySelector( '#c' );
-	//const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 	const renderer = new THREE.WebGLRenderer( {
-		canvas, 
+		 
 		antialias: true,
+		canvas,
 		alpha: true,
 	});
 	//renderer.outputEncoding = THREE.sRGBEncoding;
 
 	// Source: Alison Sun! https://alisun4.github.io/CSE160-asg05/ 
-	// renderer.setSize(window.innerWidth, window.innerHeight);
-	// renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setPixelRatio(window.devicePixelRatio);
 
-	
 
 	const fov = 75;
 	const aspect = canvas.width/canvas.height; // the canvas default: width/height = 300/150 = 2
 	const near = 0.1;
-	const far = 150;
+	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	//camera.position.set(0, 10, 20);
-	camera.position.z = 50;
-	camera.position.y = 10;
-	camera.position.x = -3;
+	camera.position.set(-10, 20, 100);
+	// camera.position.z = 60;
+	// camera.position.y = 10;
+	// camera.position.x = -6;
 
 	const scene = new THREE.Scene();
 	
@@ -50,20 +43,9 @@ function main() {
 	controls.target.set( 0, 0, 0);
 	controls.update();
 
-	// camera persective, need to import gui
-
+	// camera persective, need to import gui?
 
 	// 3 light sources:
-
-	// 1) Directional Light
-	// const dirColor = 0xFFFFFF;
-	// const dirIntensity = 1;
-	// const dirLight = new THREE.DirectionalLight(dirColor, dirIntensity);
-	// dirLight.position.set(0, 10, 0);	//idk
-	// dirLight.target.position.set(-5, 0, 0);
-	// scene.add(dirLight);
-	// scene.add(dirLight.target);
-
 	// Directional Light
 	{
 
@@ -106,44 +88,69 @@ function main() {
 	//     ........		   //
 	/////////////////////////
 
-	{	// assets/oshawott/scene.gltf
-		//const url = './oshawott/scene.gltf';
+	// oshawott
+	{	
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load('./assets/oshawott/scene.gltf', (gltf) => {
+		gltfLoader.load('../assets/oshawott/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(2.5, 2.5, 2.5);
+			gltf.scene.position.set(-8, -5, 20);
 			const model = gltf.scene;
+			
+			
 			scene.add(model);
-			console.log("added model");
+			console.log("added osha model");
 		});
 	}
 
-	
+	// pokemon mart
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pokemart/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(10, 10, 10);
+			gltf.scene.position.set(0, -5, -15);
+			gltf.scene.rotation.y += 5.14;
 
-	// {
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added pokemart model");
+		});
+	}
 
-	// 	const gltfLoader = new GLTFLoader();
-	// 	gltfLoader.load( 'https://threejs.org/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf', ( gltf ) => {
+	// pokemon center
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pokecenter/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(40, 40, 40);
+			gltf.scene.position.set(0, -5, 12);
+			gltf.scene.rotation.y += 2;
+			
 
-	// 		const root = gltf.scene;
-	// 		scene.add( root );
+			const model = gltf.scene;
+			model.position.x = -54;
+			
+			scene.add(model);
+			console.log("added pokecenter model");
+		});
+	}
 
-	// 		// compute the box that contains all the stuff
-	// 		// from root and below
-	// 		const box = new THREE.Box3().setFromObject( root );
+	// pokemon trainer
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/poketrainer/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(10, 10, 10);
+			gltf.scene.position.set(0, 20, -20);
+			gltf.scene.rotation.y += 2;
+			
 
-	// 		const boxSize = box.getSize( new THREE.Vector3() ).length();
-	// 		const boxCenter = box.getCenter( new THREE.Vector3() );
+			const model = gltf.scene;
+			//model.position.x = -54.5;
+			
+			scene.add(model);
+			console.log("added pokecenter model");
+		});
+	}
 
-	// 		// set the camera to frame the box
-	// 		frameArea( boxSize * 0.5, boxSize, boxCenter, camera );
-
-	// 		// update the Trackball controls to handle the new size
-	// 		controls.maxDistance = boxSize * 10;
-	// 		controls.target.copy( boxCenter );
-	// 		controls.update();
-
-	// 	} );
-
-	// }
 
 
 	// TORUS KNOT SHAPE
@@ -151,7 +158,8 @@ function main() {
 	function makeTorusKnot(c, x, y, z, s) {
 		const geometry = new THREE.TorusKnotGeometry(10/s, 3/s, 100/3*s, 16/s ); //10, 3, 100, 16 
 		const material = new THREE.MeshPhongMaterial( { color: c } ); 	//0xffff00
-		const torusKnot = new THREE.Mesh( geometry, material ); scene.add( torusKnot );
+		const torusKnot = new THREE.Mesh( geometry, material ); 
+		//scene.add( torusKnot );
 		//cubes.push(torusKnot);
 		torusKnot.position.x = x;
 		torusKnot.position.y = y;
@@ -260,7 +268,8 @@ function main() {
 	function makeCone(c, x, y, z, r, h) {	// last two: radius and height
 		const geometry = new THREE.ConeGeometry( r, h, 32 ); 	//  5, 20, 32
 		const material = new THREE.MeshPhongMaterial( {color: c} );	// 0xffff00
-		const cone = new THREE.Mesh(geometry, material ); scene.add( cone );
+		const cone = new THREE.Mesh(geometry, material ); 
+		//scene.add( cone );
 
 		cone.position.x = x;
 		cone.position.y = y;
@@ -277,6 +286,7 @@ function main() {
         // makeInstance( geoSphere, 0xffff00, 1),
 
 		//makeInstance(0x8844aa, 12, 14, 3, 2.5),		// purple
+
 		makeInstance(0xaa8844, 12, 0, -3, 1.5),		// yellow brown bottom right
 		makeInstance(0xaa8844, -25, 18, -5, 1.5),     //
 
