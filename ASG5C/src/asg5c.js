@@ -6,7 +6,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 
 // HOF source/inspo: https://people.ucsc.edu/~capar/cse160/asg5/world.html
-// loading obj with gltf source: Daphne Cheng! https://blu-octopus.github.io/cse160/asgn5a/asgn5
+// Loading obj with GLTF source: Daphne Cheng! https://blu-octopus.github.io/cse160/asgn5a/asgn5
 
 function main() {
 
@@ -30,12 +30,9 @@ function main() {
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
 	camera.position.set(-10, 20, 100);
-	// camera.position.z = 60;
-	// camera.position.y = 10;
-	// camera.position.x = -6;
+
 
 	const scene = new THREE.Scene();
-	
 	//scene.background = new THREE.Color( 'black' );
 
 	// orbit controls
@@ -84,8 +81,8 @@ function main() {
 	}
 
 
+	/////////////////////////
 	// load 3d object here //
-	//     ........		   //
 	/////////////////////////
 
 	// oshawott
@@ -95,7 +92,6 @@ function main() {
 			gltf.scene.scale.set(2.5, 2.5, 2.5);
 			gltf.scene.position.set(-8, -5, 20);
 			const model = gltf.scene;
-			
 			
 			scene.add(model);
 			console.log("added osha model");
@@ -134,7 +130,7 @@ function main() {
 		});
 	}
 
-	// pokemon trainer
+	// pokemon trainer - animated
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/poketrainer/scene.gltf', (gltf) => {
@@ -146,7 +142,7 @@ function main() {
 			const model = gltf.scene;
 			//model.position.x = -54.5;
 			
-			scene.add(model);
+			//scene.add(model);
 			console.log("added pokecenter model");
 		});
 	}
