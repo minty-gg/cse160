@@ -61,38 +61,38 @@ function main() {
 
 	// camera persective, need to import gui?
 	// // gui class
-	// class MinMaxGUIHelper {
-	// 	constructor(obj, minProp, maxProp, minDif) {
-	// 		this.obj = obj;
-	// 		this.minProp = minProp;
-	// 		this.maxProp = maxProp;
-	// 		this.minDif = minDif;
-	// 	}
-	// 	get min() {
-	// 		return this.obj[this.minProp];
-	// 	}
-	// 	set min(v) {
-	// 		this.obj[this.minProp] = v;
-	// 		this.obj[this.maxProp] = Math.max(this.obj[this.maxProp], v + this.minDif);
-	// 	}
-	// 	get max() {
-	// 		return this.obj[this.maxProp];
-	// 	}
-	// 	set max(v) {
-	// 		this.obj[this.maxProp] = v;
-	// 		this.min = this.min;  // this will call the min setter
-	// 	}
-	// }
+	class MinMaxGUIHelper {
+		constructor(obj, minProp, maxProp, minDif) {
+			this.obj = obj;
+			this.minProp = minProp;
+			this.maxProp = maxProp;
+			this.minDif = minDif;
+		}
+		get min() {
+			return this.obj[this.minProp];
+		}
+		set min(v) {
+			this.obj[this.minProp] = v;
+			this.obj[this.maxProp] = Math.max(this.obj[this.maxProp], v + this.minDif);
+		}
+		get max() {
+			return this.obj[this.maxProp];
+		}
+		set max(v) {
+			this.obj[this.maxProp] = v;
+			this.min = this.min;  // this will call the min setter
+		}
+	}
 
-	// function updateCamera() {
-	// 	camera.updateProjectionMatrix();
-	// }
+	function updateCamera() {
+		camera.updateProjectionMatrix();
+	}
 		
-	// const gui = new GUI();
-	// gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
-	// const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
-	// gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
-	// gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
+	const gui = new GUI();
+	gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
+	const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
+	gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
+	gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
 
 
 	// 3 light sources:
@@ -150,6 +150,77 @@ function main() {
 			console.log("added osha model");
 		});
 	}
+
+	// chespin
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/chespin/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(12, 12, 12);
+			gltf.scene.position.set(-40, -5, -20);
+			gltf.scene.rotation.y -= 1;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added chespin model");
+		});
+	}
+
+	// froakie
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/froakie/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(12, 12, 12);
+			gltf.scene.position.set(-10, -5, -23);
+			gltf.scene.rotation.y -= 1;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added froakie model");
+		});
+	}
+
+	// fennekin
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/fennekin/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(10, 10, 10);
+			gltf.scene.position.set(-47, -5, 23);
+			gltf.scene.rotation.y -= 1;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added fennekin model");
+		});
+	}
+
+	// pikachu
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pikachu/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(10, 10, 10);
+			gltf.scene.position.set(-30, -5, 15);
+			gltf.scene.rotation.y -= 1;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added pikachu model");
+		});
+	}
+
+	//psyduck
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/psyduck/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(5.5, 5.5, 5.5);
+			gltf.scene.position.set(18, -5, -10);
+			gltf.scene.rotation.y += 0.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added psyduck model");
+		});
+	}
+
 
 	// pokemon mart
 	{	

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Chespin
+* source:	https://sketchfab.com/3d-models/chespin-3a79f593cb3d4d95a604899ee835fcca
+* author:	julian (https://sketchfab.com/julianmigueldescolado2008)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Chespin" (https://sketchfab.com/3d-models/chespin-3a79f593cb3d4d95a604899ee835fcca) by julian (https://sketchfab.com/julianmigueldescolado2008) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
