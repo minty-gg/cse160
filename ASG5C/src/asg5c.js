@@ -7,6 +7,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 // HOF source/inspo: https://people.ucsc.edu/~capar/cse160/asg5/world.html
 // Loading obj with GLTF source: Daphne Cheng! https://blu-octopus.github.io/cse160/asgn5a/asgn5
+// - https://discourse.threejs.org/t/how-to-scale-a-gltf-animated-model/29453 
 
 function main() {
 
@@ -23,24 +24,76 @@ function main() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 
+	// // stats
+	// stats = new Stats();
+	
 
+
+	
+	// camera setup
 	const fov = 75;
-	const aspect = canvas.width/canvas.height; // the canvas default: width/height = 300/150 = 2
+	const aspect = 2; //canvas.width/canvas.height; // the canvas default: width/height = 300/150 = 2
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set(-10, 20, 100);
+	camera.position.set(50, 20, 100);
+	camera.rotation.y +=1;
+	// camera.up.set(0, 1, 0);
+	// camera.lookAt(5, 1, 1);
 
 
 	const scene = new THREE.Scene();
 	//scene.background = new THREE.Color( 'black' );
+
+	// for fog
+	// {
+	// 	const color = 0xF0F0FF;  // white
+	// 	const near = 30;
+	// 	const far = 500;
+	// 	scene.fog = new THREE.Fog(color, near, far);
+	// }
 
 	// orbit controls
 	const controls = new OrbitControls( camera, canvas );
 	controls.target.set( 0, 0, 0);
 	controls.update();
 
+
 	// camera persective, need to import gui?
+	// // gui class
+	// class MinMaxGUIHelper {
+	// 	constructor(obj, minProp, maxProp, minDif) {
+	// 		this.obj = obj;
+	// 		this.minProp = minProp;
+	// 		this.maxProp = maxProp;
+	// 		this.minDif = minDif;
+	// 	}
+	// 	get min() {
+	// 		return this.obj[this.minProp];
+	// 	}
+	// 	set min(v) {
+	// 		this.obj[this.minProp] = v;
+	// 		this.obj[this.maxProp] = Math.max(this.obj[this.maxProp], v + this.minDif);
+	// 	}
+	// 	get max() {
+	// 		return this.obj[this.maxProp];
+	// 	}
+	// 	set max(v) {
+	// 		this.obj[this.maxProp] = v;
+	// 		this.min = this.min;  // this will call the min setter
+	// 	}
+	// }
+
+	// function updateCamera() {
+	// 	camera.updateProjectionMatrix();
+	// }
+		
+	// const gui = new GUI();
+	// gui.add(camera, 'fov', 1, 180).onChange(updateCamera);
+	// const minMaxGUIHelper = new MinMaxGUIHelper(camera, 'near', 'far', 0.1);
+	// gui.add(minMaxGUIHelper, 'min', 0.1, 50, 0.1).name('near').onChange(updateCamera);
+	// gui.add(minMaxGUIHelper, 'max', 0.1, 50, 0.1).name('far').onChange(updateCamera);
+
 
 	// 3 light sources:
 	// Directional Light
@@ -130,26 +183,62 @@ function main() {
 		});
 	}
 
+	var mixer;
+	var clock = new THREE.Clock();
+
 	// pokemon trainer - animated
+	// - https://discourse.threejs.org/t/easiest-way-to-play-skeletal-animation-from-gltf/7792 
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/poketrainer/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(10, 10, 10);
-			gltf.scene.position.set(0, 20, -20);
+			gltf.scene.scale.set(14, 14, 14);
+			gltf.scene.position.set(-70, -5, -20);
 			gltf.scene.rotation.y += 2;
+
+			// for poketrainer animation
+			
+			mixer = new THREE.AnimationMixer( gltf.scene );
+			var action = mixer.clipAction( gltf.animations[ 0 ] );
+			action.play();
+
+			scene.add( gltf.scene );
+			animateTrainer();
 			
 
-			const model = gltf.scene;
+			// const model = gltf.scene;
 			//model.position.x = -54.5;
 			
 			//scene.add(model);
-			console.log("added pokecenter model");
+			console.log("added poketrainer model");
+		});
+	}
+
+	// var mixer2;
+	// var clock2 = new THREE.Clock();
+	// profesorr sycamore from the kaolos region
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/prof_sycamore/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(14, 14, 14);
+			gltf.scene.position.set(-45, -5, -33);
+			gltf.scene.rotation.y -= 1;
+
+			// for prof sycamore's animation --> idk how to have 2 animations at once :( the console will complain
+			
+			// mixer2 = new THREE.AnimationMixer( gltf.scene );
+			// var action2 = mixer.clipAction( gltf.animations[ 0 ] );
+			// action2.play();
+
+			scene.add( gltf.scene );
+			//animateProf();
+
+			console.log("added poketrainer model");
 		});
 	}
 
 
 
-	// TORUS KNOT SHAPE
+	// === TORUS KNOT SHAPE ===
 
 	function makeTorusKnot(c, x, y, z, s) {
 		const geometry = new THREE.TorusKnotGeometry(10/s, 3/s, 100/3*s, 16/s ); //10, 3, 100, 16 
@@ -160,7 +249,6 @@ function main() {
 		torusKnot.position.x = x;
 		torusKnot.position.y = y;
 		torusKnot.position.z = z;
-
 
 		return torusKnot;
 	}
@@ -423,6 +511,37 @@ function main() {
 	}
 
 	requestAnimationFrame( render );
+
+
+	// for poketrainer
+	function animateTrainer() {
+
+		requestAnimationFrame( animateTrainer );
+
+		var delta = clock.getDelta();
+
+		if ( mixer ) mixer.update( delta );
+
+		renderer.render( scene, camera );
+
+		//stats.update();
+
+	}
+
+	// for professor sycamore
+	// function animateProf() {
+
+	// 	requestAnimationFrame( animateProf );
+
+	// 	var delta2 = clock2.getDelta();
+
+	// 	if ( mixer2 ) mixer2.update( delta2 );
+
+	// 	renderer.render( scene, camera );
+
+	// 	//stats.update();
+
+	// }
 
 }
 

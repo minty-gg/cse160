@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sycamore_Regular_00
+* source:	https://sketchfab.com/3d-models/sycamore-regular-00-7c98c13aee4a42bea0d24296ac8f993c
+* author:	Pixartist (https://sketchfab.com/PixartistEli)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sycamore_Regular_00" (https://sketchfab.com/3d-models/sycamore-regular-00-7c98c13aee4a42bea0d24296ac8f993c) by Pixartist (https://sketchfab.com/PixartistEli) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
