@@ -31,11 +31,11 @@ function main() {
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set(40, 60, 150);
+	camera.position.set(40, 50, 150);
 	
 	camera.rotation.y +=1;
-	// camera.up.set(0, 1, 0);
-	// camera.lookAt(5, 1, 1);
+	camera.up.set(0, 1, 0);
+	camera.lookAt(0, 1, 1);
 
 
 	const scene = new THREE.Scene();
@@ -51,7 +51,7 @@ function main() {
 
 	// orbit controls
 	const controls = new OrbitControls( camera, canvas );
-	controls.target.set( 0, -5, 0);
+	controls.target.set( 0, 5, 0);
 	controls.update();
 
 
@@ -109,9 +109,9 @@ function main() {
 		const ambColor = 0x000000;
 		const ambIntensity = 1;
 		const ambLight = new THREE.AmbientLight(ambColor, ambIntensity);
-		//const light = new THREE.AmbientLight(ambColor, ambIntensity);
-		//light.position.set(3, 2, 3);
-		//ambLight.position.set(0, 20, 0);
+		const light = new THREE.AmbientLight(ambColor, ambIntensity);
+		light.position.set(3, 2, 3);
+		ambLight.position.set(0, 20, 0);
 
 		scene.add(ambLight);
 
@@ -271,7 +271,7 @@ function main() {
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/combee/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(15, 15, 15);
+			gltf.scene.scale.set(17, 17, 17);
 			gltf.scene.position.set(30, 60, -40);
 			//gltf.scene.rotation.y += 0.5;
 			const model = gltf.scene;
