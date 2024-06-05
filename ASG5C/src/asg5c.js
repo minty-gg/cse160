@@ -24,11 +24,6 @@ function main() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setPixelRatio(window.devicePixelRatio);
 
-	// // stats
-	// stats = new Stats();
-	
-
-
 	
 	// camera setup
 	const fov = 75;
@@ -36,7 +31,8 @@ function main() {
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set(50, 20, 100);
+	camera.position.set(40, 60, 150);
+	
 	camera.rotation.y +=1;
 	// camera.up.set(0, 1, 0);
 	// camera.lookAt(5, 1, 1);
@@ -55,7 +51,7 @@ function main() {
 
 	// orbit controls
 	const controls = new OrbitControls( camera, canvas );
-	controls.target.set( 0, 0, 0);
+	controls.target.set( 0, -5, 0);
 	controls.update();
 
 
@@ -115,12 +111,32 @@ function main() {
 		const ambLight = new THREE.AmbientLight(ambColor, ambIntensity);
 		//const light = new THREE.AmbientLight(ambColor, ambIntensity);
 		//light.position.set(3, 2, 3);
-		ambLight.position.set(0, 0, 0);
+		//ambLight.position.set(0, 20, 0);
+
 		scene.add(ambLight);
 
 		const ambLight2 = new THREE.AmbientLight(ambColor, ambIntensity);
 		ambLight2.position.set(1, 2, 4);
 		scene.add( ambLight2 );
+
+
+		// ambient light GUI to adjust colors and light intensity
+		class ColorGUIHelper {
+		constructor(object, prop) {
+			this.object = object;
+			this.prop = prop;
+		}
+		get value() {
+			return `#${this.object[this.prop].getHexString()}`;
+		}
+		set value(hexString) {
+			this.object[this.prop].set(hexString);
+		}
+		}
+
+		//const gui2 = new GUI();
+		gui.addColor(new ColorGUIHelper(ambLight, 'color'), 'value').name('color');
+		gui.add(ambLight, 'intensity', 0, 2, 0.01);
 
 	}
 
@@ -138,12 +154,14 @@ function main() {
 	// load 3d object here //
 	/////////////////////////
 
+	// adding phong mesh texture to 3d models: https://discourse.threejs.org/t/how-to-texture-a-3d-model-in-three-js/25035
+
 	// oshawott
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/oshawott/scene.gltf', (gltf) => {
 			gltf.scene.scale.set(2.5, 2.5, 2.5);
-			gltf.scene.position.set(-8, -5, 20);
+			gltf.scene.position.set(-8, -5, 17);
 			const model = gltf.scene;
 			
 			scene.add(model);
@@ -155,7 +173,7 @@ function main() {
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/chespin/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(12, 12, 12);
+			gltf.scene.scale.set(10, 10, 10);
 			gltf.scene.position.set(-40, -5, -20);
 			gltf.scene.rotation.y -= 1;
 			const model = gltf.scene;
@@ -169,8 +187,8 @@ function main() {
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/froakie/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(12, 12, 12);
-			gltf.scene.position.set(-10, -5, -23);
+			gltf.scene.scale.set(11, 11, 11);
+			gltf.scene.position.set(-10, -5, -29);
 			gltf.scene.rotation.y -= 1;
 			const model = gltf.scene;
 			
@@ -183,7 +201,7 @@ function main() {
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/fennekin/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(10, 10, 10);
+			gltf.scene.scale.set(9, 9, 9);
 			gltf.scene.position.set(-47, -5, 23);
 			gltf.scene.rotation.y -= 1;
 			const model = gltf.scene;
@@ -221,13 +239,82 @@ function main() {
 		});
 	}
 
+	// wingull
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/wingull/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(2, 2, 2);
+			gltf.scene.position.set(-80, 65, 0);
+			gltf.scene.rotation.y += 1.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added wingull model");
+		});
+	}
+
+	// starly
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/starly/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(2, 2, 2);
+			gltf.scene.position.set(3, 53.7, 12);
+			//gltf.scene.rotation.y += 0.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added starly model");
+		});
+	}
+
+	// combee
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/combee/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(15, 15, 15);
+			gltf.scene.position.set(30, 60, -40);
+			//gltf.scene.rotation.y += 0.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added combee model");
+		});
+	}
+
+	// audino
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/audino/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(4, 4, 4);
+			gltf.scene.position.set(-25.4, -1.6, 49);
+			gltf.scene.rotation.y += 0.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added audino model");
+		});
+	}
+	// SUICUNE
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/suicune/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(1, 1, 1);
+			gltf.scene.position.set(-45, -5, -70);
+			//gltf.scene.rotation.y += 0.5;
+			const model = gltf.scene;
+			
+			scene.add(model);
+			console.log("added audino model");
+		});
+	}
+
 
 	// pokemon mart
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/pokemart/scene.gltf', (gltf) => {
 			gltf.scene.scale.set(10, 10, 10);
-			gltf.scene.position.set(0, -5, -15);
+			gltf.scene.position.set(-3, -5, -22);
 			gltf.scene.rotation.y += 5.14;
 
 			const model = gltf.scene;
@@ -253,27 +340,83 @@ function main() {
 			console.log("added pokecenter model");
 		});
 	}
+	// pokemon room
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pokeroom/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(7, 7, 7);
+			gltf.scene.position.set(-68, -5, -67);
+			console.log(gltf.scene.position);
+			gltf.scene.rotation.y += 0.45;
+			
+
+			const model = gltf.scene;
+			//model.position.x = -54;
+			
+			scene.add(model);
+			console.log("added pokeroom model");
+		});
+	}
+
+	// pokemon cap
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pokecap/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(0.0025, 0.0025, 0.0025);
+			gltf.scene.position.set(-85, 0.5, -40);
+			console.log(gltf.scene.position);
+			gltf.scene.rotation.y -= 2;
+			
+
+			const model = gltf.scene;
+			
+			
+			scene.add(model);
+			console.log("added pokecap model");
+		});
+	}
+
+	// pokemon logo
+	{	
+		const gltfLoader = new GLTFLoader();
+		gltfLoader.load('../assets/pokelogo/scene.gltf', (gltf) => {
+			gltf.scene.scale.set(0.1, 0.1, 0.1);
+			gltf.scene.position.set(-10, 45, 20);
+			console.log(gltf.scene.position);
+			gltf.scene.rotation.y += 0.45;
+			
+
+			const model = gltf.scene;
+			
+			
+			scene.add(model);
+			console.log("added pokelogo model");
+		});
+	}
+
 
 	var mixer;
 	var clock = new THREE.Clock();
 
 	// pokemon trainer - animated
 	// - https://discourse.threejs.org/t/easiest-way-to-play-skeletal-animation-from-gltf/7792 
+	// - https://github.com/mrdoob/three.js/blob/93e72ba7b24958ddb0652bd33171edd14ed2d693/examples/webgl_loader_fbx.html#L156-L168
 	{	
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load('../assets/poketrainer/scene.gltf', (gltf) => {
-			gltf.scene.scale.set(14, 14, 14);
+			gltf.scene.scale.set(15, 15, 15);
 			gltf.scene.position.set(-70, -5, -20);
 			gltf.scene.rotation.y += 2;
 
 			// for poketrainer animation
 			
+			
+
+			scene.add( gltf.scene );
 			mixer = new THREE.AnimationMixer( gltf.scene );
 			var action = mixer.clipAction( gltf.animations[ 0 ] );
 			action.play();
-
-			scene.add( gltf.scene );
-			animateTrainer();
+			//animate();
 			
 
 			// const model = gltf.scene;
@@ -284,8 +427,8 @@ function main() {
 		});
 	}
 
-	// var mixer2;
-	// var clock2 = new THREE.Clock();
+	var mixer2;
+	//var clock2 = new THREE.Clock();
 	// profesorr sycamore from the kaolos region
 	{	
 		const gltfLoader = new GLTFLoader();
@@ -295,13 +438,14 @@ function main() {
 			gltf.scene.rotation.y -= 1;
 
 			// for prof sycamore's animation --> idk how to have 2 animations at once :( the console will complain
-			
-			// mixer2 = new THREE.AnimationMixer( gltf.scene );
-			// var action2 = mixer.clipAction( gltf.animations[ 0 ] );
-			// action2.play();
 
 			scene.add( gltf.scene );
-			//animateProf();
+
+			// mixer2 = new THREE.AnimationMixer( gltf.scene );
+			// var action = mixer.clipAction( gltf.animations[ 0 ] );
+			// action.play();
+
+			//animate();
 
 			console.log("added poketrainer model");
 		});
@@ -311,18 +455,18 @@ function main() {
 
 	// === TORUS KNOT SHAPE ===
 
-	function makeTorusKnot(c, x, y, z, s) {
-		const geometry = new THREE.TorusKnotGeometry(10/s, 3/s, 100/3*s, 16/s ); //10, 3, 100, 16 
-		const material = new THREE.MeshPhongMaterial( { color: c } ); 	//0xffff00
-		const torusKnot = new THREE.Mesh( geometry, material ); 
-		//scene.add( torusKnot );
-		//cubes.push(torusKnot);
-		torusKnot.position.x = x;
-		torusKnot.position.y = y;
-		torusKnot.position.z = z;
+	// function makeTorusKnot(c, x, y, z, s) {
+	// 	const geometry = new THREE.TorusKnotGeometry(10/s, 3/s, 100/3*s, 16/s ); //10, 3, 100, 16 
+	// 	const material = new THREE.MeshPhongMaterial( { color: c } ); 	//0xffff00
+	// 	const torusKnot = new THREE.Mesh( geometry, material ); 
+	// 	//scene.add( torusKnot );
+	// 	//cubes.push(torusKnot);
+	// 	torusKnot.position.x = x;
+	// 	torusKnot.position.y = y;
+	// 	torusKnot.position.z = z;
 
-		return torusKnot;
-	}
+	// 	return torusKnot;
+	// }
 	
 	// ==========
 
@@ -339,7 +483,7 @@ function main() {
 
 	// ==== MAKE A HEART FUNCTION ========
 	// SOURCE: https://threejs.org/docs/index.html?q=geometry#api/en/geometries/ShapeGeometry
-	function makeHeart(c, xcoord, ycoord, zcoord, s, r){	// color, x, y, z, scale, Zrotate
+	function makeHeart(c, xcoord, ycoord, zcoord, s, rY, rZ){	// color, x, y, z, scale, Zrotate
 		const x = 0, y = 0;
 		const heartShape = new THREE.Shape();
 		
@@ -353,23 +497,24 @@ function main() {
 
 		const heart = new THREE.ExtrudeGeometry(heartShape, extrudeSettings); // line from Copilot for extrude shape to render!
 		heart.scale(s, s, s);
-		heart.rotateZ(r);
+		heart.rotateY(rY);
+		heart.rotateZ(rZ);
 
 		const heartMaterial = new THREE.MeshPhongMaterial( { color: c} );
 		const meshHeart = new THREE.Mesh(heart, heartMaterial );
 
 		meshHeart.position.set(xcoord, ycoord, zcoord);
-		//scene.add(meshHeart);
+		scene.add(meshHeart);
 
 	}
 	// ===================================
 	// heart scene add calls:
-	makeHeart(0xff0000, 0, 6, -40, 1, -3); 	  // center big heart
-	makeHeart(0xff0000, 18, 25, -8, 0.2, -3); // right top small heart
-	makeHeart(0xff0000, -18, 20, -8, 0.2, -3); // left top small 
+	makeHeart(0xff0000, -10, 80, 13, 0.7, -0.5, -3); 	  // center big heart
+	// makeHeart(0xff0000, 18, 25, -8, 0.2, -3); // right top small heart
+	// makeHeart(0xff0000, -18, 20, -8, 0.2, -3); // left top small 
 
-	makeHeart(0xff0000, -22, -20, -8, 0.2, -3); // left bottom small
-	makeHeart(0xff0000, 18, -28, -5, 0.2, -3); // right bottom small
+	// makeHeart(0xff0000, -22, -20, -8, 0.2, -3); // left bottom small
+	// makeHeart(0xff0000, 18, -28, -5, 0.2, -3); // right bottom small
 
 	// ------------------------
 
@@ -442,21 +587,21 @@ function main() {
 
 		//makeInstance(0x8844aa, 12, 14, 3, 2.5),		// purple
 
-		makeInstance(0xaa8844, 12, 0, -3, 1.5),		// yellow brown bottom right
-		makeInstance(0xaa8844, -25, 18, -5, 1.5),     //
+		// makeInstance(0xaa8844, 12, 0, -3, 1.5),		// yellow brown bottom right
+		// makeInstance(0xaa8844, -25, 18, -5, 1.5),     //
 
-		makeSphere(0x395884, -9, 15, 0, 1),			// osha navy blue
-		makeSphere(0x87C9C5, 3, 11, -2, 1),			// turquoise
-		makeSphere(0x98edac, -35, -15, -15, 1.5),	// some green bottom left
-		makeSphere(0x82b8e8, 25, -5, -10, 3),
+		// makeSphere(0x395884, -9, 15, 0, 1),			// osha navy blue
+		// makeSphere(0x87C9C5, 3, 11, -2, 1),			// turquoise
+		// makeSphere(0x98edac, -35, -15, -15, 1.5),	// some green bottom left
+		// makeSphere(0x82b8e8, 25, -5, -10, 3),
 
 
-		makeCone(0xfffbb9, -20, 28, -5, 5, 5), 		// top left shell color cone
-		makeCone(0x395884, 20, -20, -4, 5, 5),
+		// makeCone(0xfffbb9, -20, 28, -5, 5, 5), 		// top left shell color cone
+		// makeCone(0x395884, 20, -20, -4, 5, 5),
 
-		makeTorusKnot(0xbac0d4, -30, 10, 10, 5),
-		makeTorusKnot(0x3cb0bd, 40, 13, -25, 3),
-		makeTorusKnot(0x87C9C5, -10, -35, -5, 4),
+		// makeTorusKnot(0xbac0d4, -30, 10, 10, 5),
+		// makeTorusKnot(0x3cb0bd, 40, 13, -25, 3),
+		// makeTorusKnot(0x87C9C5, -10, -35, -5, 4),
 	];
 
 
@@ -474,21 +619,21 @@ function main() {
 			} );
 	}
 
-	// osha texture cube
-	const loader = new THREE.TextureLoader();
-	loader.load('oshawott.JPG', (texture) => {
-	texture.colorSpace = THREE.SRGBColorSpace;
-	const material = new THREE.MeshBasicMaterial({
-		map: texture,
-	});
+	// // osha texture cube
+	// const loader = new THREE.TextureLoader();
+	// loader.load('oshawott.JPG', (texture) => {
+	// texture.colorSpace = THREE.SRGBColorSpace;
+	// const material = new THREE.MeshBasicMaterial({
+	// 	map: texture,
+	// });
 	
-	//const osha = new THREE.Mesh(new THREE.SphereGeometry( 3, 25, 9 ), material);
-	const osha = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), material);
-	osha.position.set(-20, 5, -3);
+	// //const osha = new THREE.Mesh(new THREE.SphereGeometry( 3, 25, 9 ), material);
+	// const osha = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), material);
+	// osha.position.set(-20, 5, -3);
 	
-	//scene.add(osha);
-	cubes.push(osha);  // add to our list of cubes to rotate
-	});
+	// //scene.add(osha);
+	// cubes.push(osha);  // add to our list of cubes to rotate
+	// });
 
 	// another osha texture cube
 	const loader2 = new THREE.TextureLoader();
@@ -498,27 +643,27 @@ function main() {
 		map: texture,
 	});
 	//const osha = new THREE.Mesh(new THREE.SphereGeometry( 3, 25, 9 ), material);
-	const osha2 = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), material);
-	osha2.position.set(0, 25, -8);
+	const osha2 = new THREE.Mesh(new THREE.BoxGeometry(12, 12, 12), material);
+	osha2.position.set(35, 40, -5);
 	
-	//scene.add(osha2);
+	scene.add(osha2);
 	cubes.push(osha2);  // add to our list of cubes to rotate
 	});
 
-	// ANOTHER osha texture cube (there will never be enough)
-	const loader3 = new THREE.TextureLoader();
-	loader3.load('osha3.jpeg', (texture) => {
-	texture.colorSpace = THREE.SRGBColorSpace;
-	const material = new THREE.MeshBasicMaterial({
-		map: texture,
-	});
+	// // ANOTHER osha texture cube (there will never be enough)
+	// const loader3 = new THREE.TextureLoader();
+	// loader3.load('osha3.jpeg', (texture) => {
+	// texture.colorSpace = THREE.SRGBColorSpace;
+	// const material = new THREE.MeshBasicMaterial({
+	// 	map: texture,
+	// });
 	
-	const osha3 = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), material);
-	osha3.position.set(15, 12, 0);
+	// const osha3 = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), material);
+	// osha3.position.set(15, 12, 0);
 	
-	//scene.add(osha3);
-	cubes.push(osha3);  // add to our list of cubes to rotate
-	});
+	// //scene.add(osha3);
+	// cubes.push(osha3);  // add to our list of cubes to rotate
+	// });
 
 	// ok last one (maybe)
 	const loader4 = new THREE.TextureLoader();
@@ -528,10 +673,10 @@ function main() {
 		map: texture,
 	});
 	
-	const osha4 = new THREE.Mesh(new THREE.BoxGeometry(8, 8, 8), material);
-	osha4.position.set(0, -15, 0);
+	const osha4 = new THREE.Mesh(new THREE.BoxGeometry(12, 12, 12), material);
+	osha4.position.set(-60, 40, 40);
 	
-	//scene.add(osha4);
+	scene.add(osha4);
 	cubes.push(osha4);  // add to our list of cubes to rotate
 	});
 
@@ -584,14 +729,18 @@ function main() {
 	requestAnimationFrame( render );
 
 
-	// for poketrainer
-	function animateTrainer() {
+	// to animate models
+	function animate() {
 
-		requestAnimationFrame( animateTrainer );
+		requestAnimationFrame( animate );
 
-		var delta = clock.getDelta();
+		const delta = clock.getDelta();
 
 		if ( mixer ) mixer.update( delta );
+
+		//var delta2 = clock.getDelta();
+
+		if ( mixer2 ) mixer2.update( delta );
 
 		renderer.render( scene, camera );
 
@@ -599,20 +748,9 @@ function main() {
 
 	}
 
-	// for professor sycamore
-	// function animateProf() {
+	animate();
 
-	// 	requestAnimationFrame( animateProf );
-
-	// 	var delta2 = clock2.getDelta();
-
-	// 	if ( mixer2 ) mixer2.update( delta2 );
-
-	// 	renderer.render( scene, camera );
-
-	// 	//stats.update();
-
-	// }
+	
 
 }
 

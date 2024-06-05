@@ -1,0 +1,11 @@
+Model Information:
+* title:	Combee
+* source:	https://sketchfab.com/3d-models/combee-28f3a547e41e4813992fb5cd54f827cd
+* author:	nguyenlouis32 (https://sketchfab.com/nguyenlouis32)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Combee" (https://sketchfab.com/3d-models/combee-28f3a547e41e4813992fb5cd54f827cd) by nguyenlouis32 (https://sketchfab.com/nguyenlouis32) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

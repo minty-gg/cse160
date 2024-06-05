@@ -1,0 +1,285 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 4606,
+      "max": [
+        2.8768439292907715,
+        0.7342730164527893,
+        7.224532127380371
+      ],
+      "min": [
+        -2.97166109085083,
+        -1.1666209697723389,
+        -7.2245330810546875
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 55272,
+      "componentType": 5126,
+      "count": 4606,
+      "max": [
+        0.9998363852500916,
+        0.9999791383743286,
+        0.9986366033554077
+      ],
+      "min": [
+        -0.8598707914352417,
+        -0.9999989867210388,
+        -0.9986365437507629
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 4606,
+      "max": [
+        0.9892269968986511,
+        -0.01773099973797798
+      ],
+      "min": [
+        0.01690700091421604,
+        -0.9860529899597168
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 4638,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 110544,
+      "componentType": 5126,
+      "count": 48,
+      "max": [
+        1.0067319869995117,
+        -0.28116899728775024,
+        0.6613060235977173
+      ],
+      "min": [
+        0.5845580101013184,
+        -0.8549730181694031,
+        -0.6613060235977173
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 111120,
+      "componentType": 5126,
+      "count": 48,
+      "max": [
+        0.8226110935211182,
+        -0.22806303203105927,
+        0.7815201878547668
+      ],
+      "min": [
+        0.5128698945045471,
+        -0.7536470293998718,
+        -0.7815201878547668
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 36848,
+      "componentType": 5126,
+      "count": 48,
+      "max": [
+        1.457550048828125,
+        -0.011566000059247017
+      ],
+      "min": [
+        1.0684510469436646,
+        -0.233582004904747
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 18552,
+      "componentType": 5125,
+      "count": 48,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "nguyenlouis32 (https://sketchfab.com/nguyenlouis32)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/wingull-329298244fb045a2804a9bdbcee038a6",
+      "title": "Wingull"
+    },
+    "generator": "Sketchfab-13.33.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 18744,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 37232,
+      "byteOffset": 18744,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 111696,
+      "byteOffset": 55976,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 167672,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/CamomeDh_baseColor.png"
+    },
+    {
+      "uri": "textures/CamomeEyeDh_baseColor.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "CamomeDh",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "CamomeEyeDh",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        -2.220446049250313e-16,
+        -6.661338147750939e-16,
+        1.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        -6.661338147750939e-16,
+        0.0,
+        1.0,
+        2.2204460492503126e-16,
+        2.2204460492503136e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2,
+        3
+      ],
+      "name": "Camomeout.obj.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    },
+    {
+      "mesh": 1,
+      "name": "Object_3"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    }
+  ]
+}
